@@ -1,0 +1,62 @@
+Actualmente estan cargados
+
+En los arduinos de las redes San Carlos y San Pedro
+
+* NANO_AM2305_SD_fat_mod_nuevo
+
+En el arduino de San Pedro 4 
+
+* NANO_AM2305_SD_fat_mod_nuevo_bulbo
+
+En los arduinos de la red San Mateo
+
+* NANO_AM2305_XBEE
+
+	- Excepto en el arduino de La valentina 23
+
+		* NANO_SHT1X_SD_Fat_mod_nuevo_suelo
+
+En el arduino de Mateo 16
+
+* NANO_DHT_21_GPRS
+
+
+
+En los ESP8266 de las redes San Carlos y San Pedro
+
+* Cliente_BASICO
+
+En los ESP8266 de los bloques directos, (cancha, San Pedro 4 y San Pedro 29)
+
+* ESP_WIFI
+
+
+
+
+En la cajas de los servidores 
+
+
+En el ESP8266 de la derecha viendolo de frente el cual es el que se comunica con el router wifi
+
+* ESP_WIFI_SP (red San Pedro)
+* ESP_WIFI_SC (red San Carlos)
+
+
+En el ESP8266 de la derecha viendolo de frente el cual es el que se comunica con los otros ESP de la red
+
+* Servidor
+
+En el Arduino del servidor de la red San Carlos ubicado en San Carlos 6, el cual se comunica a traves de ethernet
+
+* NANO_ETHERNET
+
+
+
+
+
+
+
+
+En el arduino ubicado en la finca vista (area sustratos)
+
+* Suelo_SD_mod
