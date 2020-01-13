@@ -1,0 +1,16 @@
+
+
+El sistema MCI esta constituido por 3 redes principales
+
+* San Mateo (Xbee)
+* San Carlos (Ethernet)
+* San Pedro (Wifi)
+
+Ademas de unos sistemas directos, ubicados en:
+
+* Mateo 16 (GPRS)
+* San Pedro 4 (wifi)
+* San Pedro 29 (wifi)
+
+
+Tambien se ubico una caja que solo almacena información de un sensor de humedad del suelo del area de sustratos en la finca Vista.

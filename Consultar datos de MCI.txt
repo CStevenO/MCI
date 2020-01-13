@@ -1,0 +1,11 @@
+
+Consulta de la información enviada por el sistema MCI
+
+http://10.50.1.154:81/mci/
+
+
+
+Consulta de la plataforma de comunicación entre la red y la base de datos
+
+
+http://10.50.1.154:1880/#flow/d87c7331.cfa21
