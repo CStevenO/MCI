@@ -1,7 +1,6 @@
 #include "painlessMesh.h"
 
-
-
+//Hola mundo
 #define   MESH_PREFIX     "FincaSanPedro"
 #define   MESH_PASSWORD   "FincaSanPedro"
 #define   MESH_PORT       5555
