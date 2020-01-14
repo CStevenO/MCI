@@ -1,6 +1,7 @@
 #include "painlessMesh.h"
 
 
+
 #define   MESH_PREFIX     "FincaSanPedro"
 #define   MESH_PASSWORD   "FincaSanPedro"
 #define   MESH_PORT       5555
@@ -33,9 +34,9 @@ size_t logServerId = 0;
 // Send message to the logServer every 10 seconds
 Task myLoggingTask(10000, TASK_FOREVER, []() {
 
-  if (mensajeS != " ") 
+  if (mensajeS != " ")
   {
-    
+
     if (mesh.sendSingle(logServerId, mensajeS)) {
         mensajeS = " ";
 
@@ -43,11 +44,11 @@ Task myLoggingTask(10000, TASK_FOREVER, []() {
         mensajeVuelve = "00,01;";
         Serial.print(mensajeVuelve);
     }
-    else 
+    else
     {
          mensajeVuelve.reserve(5);
         mensajeVuelve = "00,00;";
-        Serial.print(mensajeVuelve);      
+        Serial.print(mensajeVuelve);
     }
   }
 });
