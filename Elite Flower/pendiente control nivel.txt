@@ -1,0 +1,5 @@
+iQpump variadores 1000
+modulo rs2332 arduino
+modulo rs485 arduino
+modbus rtu
+comunicacion lora

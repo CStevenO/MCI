@@ -1,0 +1,7 @@
+Los Arduinos en su gran mayoria fueron actualizados el gestor de arranque al de Arduino Uno, esto debido a que el watchdog implementado
+no funcionaba con el gestor de arranque del Arduino Nano.
+
+Para realizar este procedimiento se carga archivo .ino de la carpeta Atmega_Boar_Programmer en el Arduino programador.
+
+
+Basado en https://www.instructables.com/id/Atmega328P-PU-Bootloader-Optiboot-Burning-Guide/ 

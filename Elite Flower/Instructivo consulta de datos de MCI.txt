@@ -1,0 +1,10 @@
+1.Ingresar en el buscador a la IP http://10.50.1.154:81/
+2.Ingresar el usuario "pastmtto" y la contraseña "elite2019" e ingresar.
+3.En la pestaña de monitoreo seleccionar la opción reportes.
+4.Ingresar en:
+  -cOD_SUC: La finca a consultar.
+  -La fecha inicial a consultar 
+  -La fecha final a consultar.
+5.Dar clic en ingresar 
+6.Seleccionar el invernadero a consultar.
+7.Dar clic en exportar para obtener los datos en formato .xlsx.
