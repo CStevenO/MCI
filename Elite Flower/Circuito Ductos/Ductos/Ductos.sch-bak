@@ -1,0 +1,76 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L Sensores:MPXV5100G U?
+U 1 1 5E286DDA
+P 5650 3500
+F 0 "U?" H 5675 3875 50  0000 C CNN
+F 1 "MPXV5100G" H 5675 3784 50  0000 C CNN
+F 2 "Sensores:MPXV5100G" H 5650 3500 50  0001 C CNN
+F 3 "" H 5650 3500 50  0001 C CNN
+	1    5650 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Conectores:Bornera1x3_2.54mm U?
+U 1 1 5E2874D8
+P 5000 3550
+F 0 "U?" H 4983 3875 50  0000 C CNN
+F 1 "Bornera1x3_2.54mm" H 4983 3784 50  0000 C CNN
+F 2 "Sensores:Bornera1x3_2.54mm" H 5000 3550 50  0001 C CNN
+F 3 "" H 5000 3550 50  0001 C CNN
+	1    5000 3550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5400 3450 5250 3450
+Wire Wire Line
+	5400 3550 5250 3550
+Wire Wire Line
+	5400 3650 5100 3650
+$Comp
+L power:+5V #PWR?
+U 1 1 5E288154
+P 5250 3050
+F 0 "#PWR?" H 5250 2900 50  0001 C CNN
+F 1 "+5V" H 5265 3223 50  0000 C CNN
+F 2 "" H 5250 3050 50  0001 C CNN
+F 3 "" H 5250 3050 50  0001 C CNN
+	1    5250 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR?
+U 1 1 5E288607
+P 5250 3900
+F 0 "#PWR?" H 5250 3650 50  0001 C CNN
+F 1 "GND" H 5255 3727 50  0000 C CNN
+F 2 "" H 5250 3900 50  0001 C CNN
+F 3 "" H 5250 3900 50  0001 C CNN
+	1    5250 3900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5250 3900 5250 3550
+Connection ~ 5250 3550
+Wire Wire Line
+	5250 3550 5100 3550
+Wire Wire Line
+	5250 3050 5250 3450
+Connection ~ 5250 3450
+Wire Wire Line
+	5250 3450 5100 3450
+$EndSCHEMATC
