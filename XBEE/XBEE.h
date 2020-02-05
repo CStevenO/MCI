@@ -7,7 +7,7 @@
 #define XOFF 0x13
 
 #define API_ID_INDEX 3
-#define ENTREGA 0X91
+#define ENTREGA 0X90
 #define RESPUESTA 0X8B
 #define ENVIO 0X10
 
