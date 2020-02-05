@@ -33,8 +33,7 @@ bool XBEE::ReadPacket()
 
     if(_pos>0 && b=ESCAPE)            //revisa sí el byte que acaba de ingresar es un byte de escape 0x7d
     {
-      while(!available())
-      {}
+      while(!available()){}
       b=read();
       b=0x20 ^ b;
     }
@@ -117,6 +116,7 @@ bool XBEE::ReadPacket()
           }
         }
     }
+    while(!available()){}
   }
   checksumTotal=0XFF-(checksumTotal)&0XFF;      //CONVIERTE LA SUMA TOTAL EN EL CHECKSUM
   if(checksunTotal==checksumRecibido)           //¿SE RECIBIO BIEN EL MENSAJE?
