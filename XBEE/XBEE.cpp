@@ -128,6 +128,34 @@ bool XBEE::ReadPacket()
     return false;     //NO
   }
 }
+bool XBEE::send(uint8_t Mensaje,uint8_t EAddress)
+{
+    write(0X7E);
+    write(longitud&0XFF00>>8);    //0XE es constante y toca sumarle la longitud del mensaje
+    write(longitud&0XFF);
+    write(0X10);
+    write(0X01);
+    checksumEnviado=0X10+0X01;
+    for(int i=0;i<8;i++)
+    {
+      write(EAddress[i]);
+      checksumEnviado=EAddress[i]+checksumEnviado;
+    }
+    write(0XFF);
+    write(0XFE);
+    checksumEnviado=0XFF+0XFE+checksumEnviado;
+    write(0X00);
+    write(0X00);
+    for(int j=0;j<(longitud-0X0E);j++)
+    {
+      write(Mensaje[j]);
+      checksumEnviado=Mensaje[j]+checksumEnviado;
+    }
+    checksumEnviado=0XFF-(0XFF&checksumEnviado);
+    write(checksumEnviado);
+    delay(100);
+    ReadPacket()
+}
 void XBEE::begin(Stream &serial)
 {
   _serial=&serial;

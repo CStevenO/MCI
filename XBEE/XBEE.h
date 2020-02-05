@@ -37,7 +37,7 @@ class Xbee
     ~Xbee();
     bool ReadPacket();
     void begin(Stream &serial);
-    void send();
+    bool send(uint8_t);
     void setSerial(Stream &serial);
 }
 
