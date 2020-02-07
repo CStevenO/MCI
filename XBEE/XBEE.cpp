@@ -1,5 +1,5 @@
 #incluide "XBEE.h"
-
+#incluce "stdlib.h"
 #incluide "HardwareSerial.h"
 
 XBEE::Xbee()
@@ -106,6 +106,10 @@ bool XBEE::ReadPacket()
             }
             else if(_pos>=15 && _pos<=Length) // N BYTES DE MENSAJE
             {
+              if(_pos>=15)
+              {
+                Msg_Recibido=new uint8_t[Length-15];
+              }
               Msg_Recibido[_pos-15]=b;
               _pos++;
             }
@@ -128,7 +132,7 @@ bool XBEE::ReadPacket()
     return false;     //NO
   }
 }
-bool XBEE::send(uint8_t Mensaje,uint8_t EAddress)
+bool XBEE::send(uint8_t *Mensaje,uint8_t *EAddress)
 {
     write(0X7E);
     write(longitud&0XFF00>>8);    //0XE es constante y toca sumarle la longitud del mensaje
@@ -148,8 +152,8 @@ bool XBEE::send(uint8_t Mensaje,uint8_t EAddress)
     write(0X00);
     for(int j=0;j<(longitud-0X0E);j++)
     {
-      write(Mensaje[j]);
-      checksumEnviado=Mensaje[j]+checksumEnviado;
+      write(*Mensaje[j]);
+      checksumEnviado=*Mensaje[j]+checksumEnviado;
     }
     checksumEnviado=0XFF-(0XFF&checksumEnviado);
     write(checksumEnviado);

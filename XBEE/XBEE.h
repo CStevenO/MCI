@@ -24,9 +24,9 @@ class Xbee
     uint8_t checksumTotal;
     uint8_t _checksumRecibido;
     uint8_t _checksumEnviado;
-    uint8_t Direccion[8];
-    uint8_t DireccionEmisor[8];
-    uint8_t Msg_Recibido[100];
+    char Direccion[8];
+    char DireccionEmisor[8];
+    char* Msg_Recibido;
     Stream* _serial;
     uint8_t _pos;
     uint8_t b;
@@ -39,6 +39,7 @@ class Xbee
     void begin(Stream &serial);
     bool send(uint8_t);
     void setSerial(Stream &serial);
+    char* Mensaje();
 }
 
 
