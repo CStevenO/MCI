@@ -1,8 +1,11 @@
 #ifndef XBEE_H
 #define XBEE_H
 
+#include<Arduino.h>
+#include "Stream.h"
+
 #define START_BYTE 0x7e
-#define ESCAPE 0x7d
+#define ESCAPE_S 0x7d
 #define XON 0x11
 #define XOFF 0x13
 
@@ -18,28 +21,30 @@ class Xbee
 {
   private:
     bool available();
-    uint8_t read();
+    char read();
     void flush();
-    void write(uint8_t);
-    uint8_t checksumTotal;
-    uint8_t _checksumRecibido;
-    uint8_t _checksumEnviado;
+    void write(char val);
+    char checksumTotal;
+    char _checksumRecibido;
+    char _checksumEnviado;
     char Direccion[8];
     char DireccionEmisor[8];
     char* Msg_Recibido;
     Stream* _serial;
-    uint8_t _pos;
-    uint8_t b;
+    char _pos;
+    char b;
     uint16_t Length;
-    uint8_t FrameType;
+    char FrameType;
     int Length_Msg;
+    char EstadoRespuesta;
+    uint16_t longitud;
   public:
     Xbee();
     ~Xbee();
     int GetLengthMsg();
     bool ReadPacket();
     void begin(Stream &serial);
-    bool send(uint8_t);
+    bool send(char *Mensaje,char *EAddress);
     void setSerial(Stream &serial);
     char* Mensaje();
 };
