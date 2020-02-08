@@ -20,7 +20,7 @@ class Xbee
     bool available();
     uint8_t read();
     void flush();
-    void write(uint8_t)
+    void write(uint8_t);
     uint8_t checksumTotal;
     uint8_t _checksumRecibido;
     uint8_t _checksumEnviado;
@@ -32,15 +32,17 @@ class Xbee
     uint8_t b;
     uint16_t Length;
     uint8_t FrameType;
+    int Length_Msg;
   public:
     Xbee();
     ~Xbee();
+    int GetLengthMsg();
     bool ReadPacket();
     void begin(Stream &serial);
     bool send(uint8_t);
     void setSerial(Stream &serial);
     char* Mensaje();
-}
+};
 
 
 

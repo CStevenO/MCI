@@ -109,6 +109,7 @@ bool XBEE::ReadPacket()
               if(_pos>=15)
               {
                 Msg_Recibido=new uint8_t[Length-15];
+                Length_Msg = Length-15;
               }
               Msg_Recibido[_pos-15]=b;
               _pos++;
@@ -167,4 +168,12 @@ void XBEE::begin(Stream &serial)
 void XBEE::setSerial(Stream &serial)
 {
   _serial=&serial;
+}
+char* XBEE::Mensaje()
+{
+    return Msg_Recibido;
+}
+int XBEE::GetLengthMsg()
+{
+  return Length_Msg;
 }
