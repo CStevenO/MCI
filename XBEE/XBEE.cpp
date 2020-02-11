@@ -39,12 +39,13 @@ bool Xbee::ReadPacket()
   while(available())
   {
     b=read();
-
+    //write(b);
     if(_pos > 0 && b == ESCAPE_S )            //revisa sí el byte que acaba de ingresar es un byte de escape 0x7d
     {
       while(!available()){}
       b=read();
       b=0x20 ^ b;
+      //write(b);
     }
     if(_pos>=API_ID_INDEX)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
     {
@@ -126,11 +127,12 @@ bool Xbee::ReadPacket()
             else
             {
               _checksumRecibido=b;           //CHECKSUM
+              _pos++;
             }
           }
         }
     }
-    while(!available()){}
+    while(!available() && _pos<=Length+1){}
   }
   checksumTotal=0XFF-(checksumTotal)&0XFF;      //CONVIERTE LA SUMA TOTAL EN EL CHECKSUM
   if(checksumTotal == _checksumRecibido)           //¿SE RECIBIO BIEN EL MENSAJE?

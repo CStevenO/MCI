@@ -20,7 +20,6 @@
 class Xbee
 {
   private:
-    bool available();
     char read();
     void flush();
     void write(char val);
@@ -41,6 +40,7 @@ class Xbee
   public:
     Xbee();
     ~Xbee();
+    bool available();
     int GetLengthMsg();
     bool ReadPacket();
     void begin(Stream &serial);
