@@ -20,23 +20,24 @@
 class Xbee
 {
   private:
-    char read();
+    uint8_t read();
     void flush();
     void write(char val);
-    char checksumTotal;
-    char _checksumRecibido;
-    char _checksumEnviado;
-    char Direccion[8];
-    char DireccionEmisor[8];
-    char* Msg_Recibido;
+    uint16_t checksumTotal;
+    uint8_t _checksumRecibido;
+    uint8_t _checksumEnviado;
+    uint8_t Direccion[8];
+    uint8_t DireccionEmisor[8];
+    uint8_t* Msg_Recibido;
     Stream* _serial;
-    char _pos;
+    int _pos;
     char b;
     uint16_t Length;
-    char FrameType;
+    uint8_t FrameType;
     int Length_Msg;
-    char EstadoRespuesta;
+    uint8_t EstadoRespuesta;
     uint16_t longitud;
+    bool Salida;
   public:
     Xbee();
     ~Xbee();
@@ -46,7 +47,8 @@ class Xbee
     void begin(Stream &serial);
     bool send(char *Mensaje,char *EAddress);
     void setSerial(Stream &serial);
-    char* Mensaje();
+    uint8_t* Mensaje();
+    void Borrar();
 };
 
 

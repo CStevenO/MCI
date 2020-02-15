@@ -22,7 +22,7 @@ bool Xbee::available()
 {
   return _serial->available();
 }
-char Xbee::read()
+uint8_t Xbee::read()
 {
   return _serial->read();
 }
@@ -36,6 +36,7 @@ void Xbee::write(char val)
 }
 bool Xbee::ReadPacket()
 {
+  Borrar();
   while(available())
   {
     b=read();
@@ -47,7 +48,7 @@ bool Xbee::ReadPacket()
       b=0x20 ^ b;
       //write(b);
     }
-    if(_pos>=API_ID_INDEX)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
+    if(_pos>=API_ID_INDEX && _pos<Length)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
     {
       checksumTotal+=b;
     }
@@ -103,6 +104,7 @@ bool Xbee::ReadPacket()
         }
         else if (FrameType==ENTREGA)    //TRAMA PARA RECIBIR MENSAJES
         {
+          write(b);
           if(_pos>=4 && _pos<=11)       // 8 BYTES DE MAC-ADDRESS DEL EMISOR
           {
             DireccionEmisor[_pos-4]=b;
@@ -114,11 +116,11 @@ bool Xbee::ReadPacket()
             {
               _pos++;
             }
-            else if(_pos>=15 && _pos<=Length) // N BYTES DE MENSAJE
+            else if(_pos>=15 && _pos<=Length+3) // N BYTES DE MENSAJE
             {
-              if(_pos>=15)
+              if(_pos==15)
               {
-                Msg_Recibido=new char[Length-15];
+                Msg_Recibido=new uint8_t[Length-15];
                 Length_Msg = Length-15;
               }
               Msg_Recibido[_pos-15]=b;
@@ -128,13 +130,16 @@ bool Xbee::ReadPacket()
             {
               _checksumRecibido=b;           //CHECKSUM
               _pos++;
+              Salida=true;
             }
           }
         }
     }
-    while(!available() && _pos<=Length+1){}
+    while(!available() && !Salida){}
   }
   checksumTotal=0XFF-(checksumTotal)&0XFF;      //CONVIERTE LA SUMA TOTAL EN EL CHECKSUM
+  write(checksumTotal);
+  write(_checksumRecibido);
   if(checksumTotal == _checksumRecibido)           //¿SE RECIBIO BIEN EL MENSAJE?
   {
     return true;      //SI
@@ -173,11 +178,26 @@ bool Xbee::send(char *Mensaje,char *EAddress)
     delay(100);
     ReadPacket();
 }
-char* Xbee::Mensaje()
+uint8_t* Xbee::Mensaje()
 {
     return Msg_Recibido;
 }
 int Xbee::GetLengthMsg()
 {
   return Length_Msg;
+}
+void Xbee::Borrar()
+{
+  Salida=false;
+  checksumTotal = 0x00;
+  _checksumRecibido = 0x00;
+  _pos = 0;
+  Length = 0x00;
+  FrameType = 0x00;
+  Length_Msg = 0;
+  delete[] Msg_Recibido;
+  for(int i=0;i<8;i++)
+  {
+    DireccionEmisor[i]=0;
+  }
 }
