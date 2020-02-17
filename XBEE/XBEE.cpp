@@ -6,6 +6,7 @@
   Xbee::Xbee()
   {
   _pos=0;
+  Salida = false;
 }
 Xbee::~Xbee()
 {
@@ -40,7 +41,6 @@ bool Xbee::ReadPacket()
   while(available())
   {
     b=read();
-    //write(b);
     if(_pos > 0 && b == ESCAPE_S )            //revisa sí el byte que acaba de ingresar es un byte de escape 0x7d
     {
       while(!available()){}
@@ -48,7 +48,7 @@ bool Xbee::ReadPacket()
       b=0x20 ^ b;
       //write(b);
     }
-    if(_pos>=API_ID_INDEX && _pos<Length)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
+    if(_pos>=API_ID_INDEX && 0x00+_pos<Length+0x03)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
     {
       checksumTotal+=b;
     }
@@ -65,7 +65,7 @@ bool Xbee::ReadPacket()
         _pos++;
       break;
       case 2:                     //SEGUNDO BYTE DE LONGITUD
-        Length=Length<<8+b;
+        Length=(Length<<8)+b;
         _pos++;
       break;
       case 3:                     //TIPO DE REQUERIMIENTO
@@ -104,7 +104,6 @@ bool Xbee::ReadPacket()
         }
         else if (FrameType==ENTREGA)    //TRAMA PARA RECIBIR MENSAJES
         {
-          write(b);
           if(_pos>=4 && _pos<=11)       // 8 BYTES DE MAC-ADDRESS DEL EMISOR
           {
             DireccionEmisor[_pos-4]=b;
@@ -116,12 +115,12 @@ bool Xbee::ReadPacket()
             {
               _pos++;
             }
-            else if(_pos>=15 && _pos<=Length+3) // N BYTES DE MENSAJE
+            else if(_pos>=15 && 0x00+_pos<=Length+0x02) // N BYTES DE MENSAJE
             {
               if(_pos==15)
               {
-                Msg_Recibido=new uint8_t[Length-15];
-                Length_Msg = Length-15;
+                Msg_Recibido=new uint8_t[Length-12];
+                Length_Msg=Length-12;
               }
               Msg_Recibido[_pos-15]=b;
               _pos++;
@@ -131,6 +130,7 @@ bool Xbee::ReadPacket()
               _checksumRecibido=b;           //CHECKSUM
               _pos++;
               Salida=true;
+              write(0XAE);
             }
           }
         }
@@ -138,8 +138,6 @@ bool Xbee::ReadPacket()
     while(!available() && !Salida){}
   }
   checksumTotal=0XFF-(checksumTotal)&0XFF;      //CONVIERTE LA SUMA TOTAL EN EL CHECKSUM
-  write(checksumTotal);
-  write(_checksumRecibido);
   if(checksumTotal == _checksumRecibido)           //¿SE RECIBIO BIEN EL MENSAJE?
   {
     return true;      //SI

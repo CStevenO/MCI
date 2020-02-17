@@ -27,11 +27,11 @@ class Xbee
     uint8_t _checksumRecibido;
     uint8_t _checksumEnviado;
     uint8_t Direccion[8];
-    uint8_t DireccionEmisor[8];
+    uint8_t DireccionEmisor[8];   //read
     uint8_t* Msg_Recibido;
     Stream* _serial;
     int _pos;
-    char b;
+    char b;           //read
     uint16_t Length;
     uint8_t FrameType;
     int Length_Msg;
