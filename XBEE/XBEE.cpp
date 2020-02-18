@@ -1,12 +1,13 @@
 #include "XBEE.h"
 #include "stdlib.h"
 #include "HardwareSerial.h"
-
+#include<Arduino.h>
 
   Xbee::Xbee()
   {
   _pos=0;
   Salida = false;
+  Primera_Vez=true;
 }
 Xbee::~Xbee()
 {
@@ -38,7 +39,8 @@ void Xbee::write(char val)
 bool Xbee::ReadPacket()
 {
   Borrar();
-  while(available())
+  while(!available()){}
+  while(!Salida)
   {
     b=read();
     if(_pos > 0 && b == ESCAPE_S )            //revisa sí el byte que acaba de ingresar es un byte de escape 0x7d
@@ -48,7 +50,7 @@ bool Xbee::ReadPacket()
       b=0x20 ^ b;
       //write(b);
     }
-    if(_pos>=API_ID_INDEX && 0x00+_pos<Length+0x03)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
+    if(_pos>=API_ID_INDEX)           //suma todos los bytes que estan ingresando despues del byte de longitud hasta el byte checksum sin tener en cuenta este
     {
       checksumTotal+=b;
     }
@@ -119,8 +121,9 @@ bool Xbee::ReadPacket()
             {
               if(_pos==15)
               {
-                Msg_Recibido=new uint8_t[Length-12];
                 Length_Msg=Length-12;
+                lista = Length_Msg;
+                Msg_Recibido=new uint8_t[lista];
               }
               Msg_Recibido[_pos-15]=b;
               _pos++;
@@ -130,7 +133,6 @@ bool Xbee::ReadPacket()
               _checksumRecibido=b;           //CHECKSUM
               _pos++;
               Salida=true;
-              write(0XAE);
             }
           }
         }
@@ -188,14 +190,6 @@ void Xbee::Borrar()
 {
   Salida=false;
   checksumTotal = 0x00;
-  _checksumRecibido = 0x00;
   _pos = 0;
-  Length = 0x00;
-  FrameType = 0x00;
-  Length_Msg = 0;
-  delete[] Msg_Recibido;
-  for(int i=0;i<8;i++)
-  {
-    DireccionEmisor[i]=0;
-  }
+  delete [] Msg_Recibido;
 }

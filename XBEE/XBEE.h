@@ -28,16 +28,18 @@ class Xbee
     uint8_t _checksumEnviado;
     uint8_t Direccion[8];
     uint8_t DireccionEmisor[8];   //read
-    uint8_t* Msg_Recibido;
+    uint8_t* Msg_Recibido=NULL;
     Stream* _serial;
     int _pos;
-    char b;           //read
+    uint8_t b;           //read
     uint16_t Length;
     uint8_t FrameType;
     int Length_Msg;
     uint8_t EstadoRespuesta;
     uint16_t longitud;
     bool Salida;
+    size_t lista;
+    bool Primera_Vez;
   public:
     Xbee();
     ~Xbee();
