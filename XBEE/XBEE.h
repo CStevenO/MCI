@@ -51,6 +51,12 @@ class Xbee
     void setSerial(Stream &serial);
     uint8_t* Mensaje();
     void Borrar();
+    uint8_t Estado();
+    /*
+    void Comprobacion();
+    void Lectura();
+    void Sera();
+    */
 };
 
 

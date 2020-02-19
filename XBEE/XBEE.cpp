@@ -101,6 +101,7 @@ bool Xbee::ReadPacket()
               case 10:          //CHECKSUM
                 _checksumRecibido=b;
                 _pos++;
+                Salida=true;
               break;
             }
         }
@@ -123,6 +124,17 @@ bool Xbee::ReadPacket()
               {
                 Length_Msg=Length-12;
                 lista = Length_Msg;
+                /*
+                if(Primera_Vez)
+                {
+                  Primera_Vez=false;
+                  write(0x00);
+                }
+                else{
+                  delete [] Msg_Recibido;
+                  write(0x01);
+                }
+                */
                 Msg_Recibido=new uint8_t[lista];
               }
               Msg_Recibido[_pos-15]=b;
@@ -191,5 +203,8 @@ void Xbee::Borrar()
   Salida=false;
   checksumTotal = 0x00;
   _pos = 0;
-  delete [] Msg_Recibido;
+}
+uint8_t Xbee::Estado()
+{
+  return EstadoRespuesta;
 }
