@@ -161,9 +161,10 @@ bool Xbee::ReadPacket()
     return false;     //NO
   }
 }
-bool Xbee::send(char *Mensaje,char *EAddress)
+bool Xbee::send(uint8_t *Mensaje,uint8_t *EAddress, uint8_t Longitud)
 {
     //CREAR TRAMA AQUI
+    longitud=ByEspecial(Longitud+0XE);
     write(0X7E);
     write((longitud&0XFF00)>>8);    //0XE es constante y toca sumarle la longitud del mensaje
     write(longitud&0XFF);
@@ -172,7 +173,15 @@ bool Xbee::send(char *Mensaje,char *EAddress)
     _checksumEnviado=0X10+0X01;
     for(int i=0;i<8;i++)
     {
-      write(EAddress[i]);
+      if(((ByEspecial(EAddress[i]))&0XFF00)>>8==0x00)
+      {
+        write(EAddress[i]);
+      }
+      else
+      {
+        write(0x7D);
+        write((ByEspecial(EAddress[i]))&0XFF)
+      }
       _checksumEnviado=EAddress[i]+_checksumEnviado;
     }
     write(0XFF);
@@ -180,15 +189,31 @@ bool Xbee::send(char *Mensaje,char *EAddress)
     _checksumEnviado=_checksumEnviado + 0XFF + 0XFE;
     write(0X00);
     write(0X00);
-    for(int j=0;j<(longitud-0X0E);j++)
+    for(int j=0;j<(Longitud);j++)
     {
-      write(*Mensaje++);
-      _checksumEnviado=_checksumEnviado+(*Mensaje);
+      if(((ByEspecial(Mensaje[j]))&0XFF00)>>8==0x00)
+      {
+        write(Mensaje[j]);
+      }
+      else
+      {
+        write(0x7D);
+        write((ByEspecial(Mensaje[j]))&0XFF)
+      }
+      _checksumEnviado=_checksumEnviado+(Mensaje[j]);
     }
     _checksumEnviado=0XFF-(0XFF&_checksumEnviado);
     write(_checksumEnviado);
     delay(100);
     ReadPacket();
+    if(Estado==0x00)
+    {
+      return true;
+    }
+    else
+    {
+      return false;
+    }
 }
 uint8_t* Xbee::Mensaje()
 {
@@ -207,4 +232,16 @@ void Xbee::Borrar()
 uint8_t Xbee::Estado()
 {
   return EstadoRespuesta;
+}
+uint8_t Xbee::ByEspecial(uint8_t Byt)
+{
+  if(Byt==START_BYTE || Byt==ESCAPE_S || Byt==XON || Byt==XOFF)
+  {
+    Byt=20^Byt;
+    return (0x7D00+Byt);
+  }
+  else
+  {
+    return Byt;
+  }
 }

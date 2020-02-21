@@ -47,11 +47,12 @@ class Xbee
     int GetLengthMsg();
     bool ReadPacket();
     void begin(Stream &serial);
-    bool send(char *Mensaje,char *EAddress);
+    bool send(uint8_t *Mensaje,uint8_t *EAddress, uint8_t Longitud);
     void setSerial(Stream &serial);
     uint8_t* Mensaje();
     void Borrar();
     uint8_t Estado();
+    uint16_t ByEspecial(uint8_t);
     /*
     void Comprobacion();
     void Lectura();
