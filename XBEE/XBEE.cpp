@@ -180,7 +180,7 @@ bool Xbee::send(uint8_t *Mensaje,uint8_t *EAddress, uint8_t Longitud)
       else
       {
         write(0x7D);
-        write((ByEspecial(EAddress[i]))&0XFF)
+        write((ByEspecial(EAddress[i]))&0XFF);
       }
       _checksumEnviado=EAddress[i]+_checksumEnviado;
     }
@@ -198,7 +198,7 @@ bool Xbee::send(uint8_t *Mensaje,uint8_t *EAddress, uint8_t Longitud)
       else
       {
         write(0x7D);
-        write((ByEspecial(Mensaje[j]))&0XFF)
+        write((ByEspecial(Mensaje[j]))&0XFF);
       }
       _checksumEnviado=_checksumEnviado+(Mensaje[j]);
     }
@@ -206,7 +206,7 @@ bool Xbee::send(uint8_t *Mensaje,uint8_t *EAddress, uint8_t Longitud)
     write(_checksumEnviado);
     delay(100);
     ReadPacket();
-    if(Estado==0x00)
+    if(EstadoRespuesta==0x00)
     {
       return true;
     }
@@ -233,7 +233,7 @@ uint8_t Xbee::Estado()
 {
   return EstadoRespuesta;
 }
-uint8_t Xbee::ByEspecial(uint8_t Byt)
+uint16_t Xbee::ByEspecial(uint8_t Byt)
 {
   if(Byt==START_BYTE || Byt==ESCAPE_S || Byt==XON || Byt==XOFF)
   {

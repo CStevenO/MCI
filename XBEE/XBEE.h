@@ -52,7 +52,7 @@ class Xbee
     uint8_t* Mensaje();
     void Borrar();
     uint8_t Estado();
-    uint16_t ByEspecial(uint8_t);
+    uint16_t ByEspecial(uint8_t Byt);
     /*
     void Comprobacion();
     void Lectura();
