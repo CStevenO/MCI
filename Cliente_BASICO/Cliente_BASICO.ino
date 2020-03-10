@@ -6,6 +6,9 @@
 #define   MESH_PASSWORD   "FincaSanPedro"
 #define   MESH_PORT       5555
 
+
+
+
 Scheduler     userScheduler; // to control your personal task
 painlessMesh  mesh;
 //bool dato = false;
