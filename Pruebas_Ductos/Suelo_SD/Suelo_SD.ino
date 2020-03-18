@@ -7,7 +7,7 @@ wdt_enable(WDTO_4S);
 
 }
 
-void loop() 
+void loop()
 {
   tiempoActual(); //RTC
   principal(); //MENU
