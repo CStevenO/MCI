@@ -27,6 +27,14 @@ float sensorValue;       // variable que almacena el valor raw (0 a 1023)
 float psi=0;
 float kpa=0;
 #define OFFSET 0;
+unsigned long previo=0;
+float escala = 0.1;
+int cont1=0;
+float voltaje;
+float voltajeProm;
+float lectura;
+float voltajeSum=0;
+String mensajeSalidaSuelo = "";
 
 
 //WATCHDOG

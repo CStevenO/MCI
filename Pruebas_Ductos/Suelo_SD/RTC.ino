@@ -1,5 +1,6 @@
 void tiempoActual()
 {
+  
   DateTime now = RTC.now(); // Obtiene la fecha y hora del RTC
   anio = now.year();
   mes = now.month();
@@ -24,7 +25,6 @@ void enviarDatos() {
     psi= psi / cont1;
     kpa= kpa / cont1;
     cont1=0;
-    voltajeSum=0;
     mensajeSalidaSuelo.reserve(30);
     mensajeSalidaSuelo = String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + String(segundo) + ',' + String(psi) + ',' + String(kpa) + ';';
     //Serial.println(mensajeSalidaSuelo);

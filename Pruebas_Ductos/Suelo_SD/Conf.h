@@ -9,7 +9,6 @@ RTC.begin();
 //Serial.begin(9600);
 //Perro
 watchdogSetup();
-//humedad suelo
- pinMode(pinSonda, INPUT);
+//humedad sueloz
  //SD
  SD.begin(10);

@@ -1,9 +1,9 @@
 void principal() 
 {
   lcd.setCursor(0, 0); 
-  imprimir("V: "); lcd.print(voltaje); 
+  imprimir("P: "); lcd.print(kpa); 
   lcd.setCursor(10, 0); 
-  imprimir(" "); imprimir("mV");
+  imprimir(" "); imprimir("Pa");
   lcd.setCursor(0, 1);
   if (hora < 10) 
   {
