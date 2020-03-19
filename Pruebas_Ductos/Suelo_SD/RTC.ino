@@ -24,6 +24,8 @@ void enviarDatos() {
     previo=millis();
     psi= psi / cont1;
     kpa= kpa / cont1;
+    Serial.print(String(psi));
+    Serial.println(","+String(kpa));
     cont1=0;
     mensajeSalidaSuelo.reserve(30);
     mensajeSalidaSuelo = String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + String(segundo) + ',' + String(psi) + ',' + String(kpa) + ';';

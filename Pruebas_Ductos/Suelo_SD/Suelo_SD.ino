@@ -3,7 +3,7 @@ void setup() {
 wdt_disable();
 #include "Conf.h"
 wdt_enable(WDTO_4S);
-
+Serial.begin(9600);
 
 }
 
