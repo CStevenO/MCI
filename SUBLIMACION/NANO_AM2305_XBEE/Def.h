@@ -6,7 +6,7 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 //DHT
 unsigned long milisAnterior = 0;
 #include <DHT.h>
-#define DHTPIN 5    // PIN SENSOR
+#define DHTPIN 4    // PIN SENSOR
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
 float t;
@@ -29,21 +29,26 @@ byte segundo = 0;
 long fecha = 0;
 
 //Sublimacion
-
-int can_subli = 1;
-byte hora1Sub[can_subli] = {0};
-byte min1Sub[can_subli] = {0};
-byte hora2Sub[can_subli] = {0};
-byte min2Sub[can_subli] = {0};
-short tiempo_sub_ini[can_subli];
-short tiempo_sub_fin[can_subli];
-for(int i=0;i<can_subli;i++)
-{
-  tiempo_sub_ini[i] = (hora1Sub[i] * 60) + min1Sub[i];
-  tiempo_sub_fin[i] = (hora2Sub[i] * 60) + min2Sub[i];
-}
+#include "Adafruit_MCP23017.h"
+byte hora1Sub = 13;
+byte min1Sub = 55;
+byte hora2Sub = 15;
+byte min2Sub = 0;
+bool compro = true;                              //false = hi>hf     ;     true = hi<hf
+short tiempo_sub_ini = (hora1Sub * 60) + min1Sub;
+short tiempo_sub_fin = (hora2Sub * 60) + min2Sub;
 short tiempo_actual = 0;
-int subli_pin = 5;    //SEGUNDO RELAY
+Adafruit_MCP23017 mcp;
+//Salidas
+//#define disOut 7 // RELÉ 4
+//#define ducOut 6 // RELÉ 3
+#define subOut 5 // RELÉ 2
+//#define venOut 4 // RELÉ 1
+//Entradas
+//#define disIn 3
+//#define ducIn 2
+#define subIn 1
+//#define venIn 0
 
 //COMUNICACION UART
 #include <AltSoftSerial.h>

@@ -3,11 +3,8 @@ void setup()
 {
   wdt_disable();
   #include "Conf.h"
-  wdt_enable(WDTO_4S);
-
-
-  pinMode(subli_pin,OUTPUT);
-
+  wdt_enable(WDTO_8S);
+  //RTC.adjust(DateTime(2020, 3, 25, 13, 50, 0));
 }
 
 void loop()

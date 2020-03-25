@@ -116,14 +116,23 @@ void enviarDatos() {
 void sublimacion()
 {
   tiempo_actual = (hora * 60) + minuto;
-  for(int i=0;i<can_subli;i++)
+  if(tiempo_sub_ini<tiempo_sub_fin)
   {
-    if(tiempo_sub_ini[i]<=tiempo_actual[i] && tiempo_sub_fin[i] >= tiempo_actual[i])
+    if(!(tiempo_sub_ini<=tiempo_actual && tiempo_sub_fin > tiempo_actual))
     {
-      digitalWrite(subli_pin,HIGH);
+      mcp.digitalWrite(subOut,HIGH);
     }
     else{
-      digitalWrite(subli_pin,LOW);
+      mcp.digitalWrite(subOut,LOW);
+    }
+  }
+  else{
+    if(!(tiempo_sub_fin<=tiempo_actual && tiempo_sub_ini > tiempo_actual))
+    {
+      mcp.digitalWrite(subOut,LOW);
+    }
+    else{
+      mcp.digitalWrite(subOut,HIGH);
     }
   }
 }
