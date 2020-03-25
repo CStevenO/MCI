@@ -116,11 +116,14 @@ void enviarDatos() {
 void sublimacion()
 {
   tiempo_actual = (hora * 60) + minuto;
-  if(tiempo_sub_ini<=tiempo_actual && tiempo_sub_fin >= tiempo_actual)
+  for(int i=0;i<can_subli;i++)
   {
-    digitalWrite(subli_pin,HIGH);
-  }
-  else{
-    digitalWrite(subli_pin,LOW);
+    if(tiempo_sub_ini[i]<=tiempo_actual[i] && tiempo_sub_fin[i] >= tiempo_actual[i])
+    {
+      digitalWrite(subli_pin,HIGH);
+    }
+    else{
+      digitalWrite(subli_pin,LOW);
+    }
   }
 }

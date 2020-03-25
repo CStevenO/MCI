@@ -30,12 +30,18 @@ long fecha = 0;
 
 //Sublimacion
 
-byte hora1Sub = 0;
-byte min1Sub = 0;
-byte hora2Sub = 0;
-byte min2Sub = 0;
-short tiempo_sub_ini = (hora1Sub * 60) + min1Sub;
-short tiempo_sub_fin = (hora2Sub * 60) + min2Sub;
+int can_subli = 1;
+byte hora1Sub[can_subli] = {0};
+byte min1Sub[can_subli] = {0};
+byte hora2Sub[can_subli] = {0};
+byte min2Sub[can_subli] = {0};
+short tiempo_sub_ini[can_subli];
+short tiempo_sub_fin[can_subli];
+for(int i=0;i<can_subli;i++)
+{
+  tiempo_sub_ini[i] = (hora1Sub[i] * 60) + min1Sub[i];
+  tiempo_sub_fin[i] = (hora2Sub[i] * 60) + min2Sub[i];
+}
 short tiempo_actual = 0;
 int subli_pin = 5;    //SEGUNDO RELAY
 
