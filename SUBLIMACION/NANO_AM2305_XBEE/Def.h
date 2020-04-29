@@ -6,7 +6,7 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 //DHT
 unsigned long milisAnterior = 0;
 #include <DHT.h>
-#define DHTPIN 4    // PIN SENSOR
+#define DHTPIN 5    // PIN SENSOR
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
 float t;
@@ -30,9 +30,9 @@ long fecha = 0;
 
 //Sublimacion
 #include "Adafruit_MCP23017.h"
-byte hora1Sub = 13;
-byte min1Sub = 55;
-byte hora2Sub = 15;
+byte hora1Sub = 20;
+byte min1Sub = 0;
+byte hora2Sub = 5;
 byte min2Sub = 0;
 bool compro = true;                              //false = hi>hf     ;     true = hi<hf
 short tiempo_sub_ini = (hora1Sub * 60) + min1Sub;
@@ -65,7 +65,7 @@ bool unicaVez1 = false;
 bool unicaVez2 = false;
 bool unicaVez3 = false;
 int datos[6];
-int idInvernadero=1783;
+int idInvernadero=1874;
 #define separador ','
 byte i = 0;
 
