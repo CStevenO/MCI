@@ -2,7 +2,8 @@
 #include <XBee.h>
 
 #include "stdlib.h"
-
+#include <AltSoftSerial.h>
+AltSoftSerial esp;
 
 XBee xbee = XBee();
 XBeeResponse response = XBeeResponse();
@@ -18,8 +19,9 @@ int i=0;
 String Msg;
 void setup() {
   // put your setup code here, to run once:
+  esp.begin(9600);
   Serial.begin(9600);
-  xbee.setSerial(Serial);
+  xbee.setSerial(esp);
 }
 
 void loop() {
