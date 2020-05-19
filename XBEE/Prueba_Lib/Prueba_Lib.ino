@@ -1,9 +1,9 @@
+
 #include <Printers.h>
 #include <XBee.h>
 
 #include "stdlib.h"
-#include <AltSoftSerial.h>
-AltSoftSerial esp;
+
 
 XBee xbee = XBee();
 XBeeResponse response = XBeeResponse();
@@ -12,16 +12,15 @@ ModemStatusResponse msr = ModemStatusResponse();
 
 uint8_t payload[]={"                "};
 
-XBeeAddress64 addr64 = XBeeAddress64(0x0013a200,0x403e0f30);
+XBeeAddress64 addr64 = XBeeAddress64(0x0013A200,0x41A0AECD);
 ZBTxRequest zbTx = ZBTxRequest(addr64,payload,sizeof(payload));
 ZBTxStatusResponse txStatus = ZBTxStatusResponse();
 int i=0;
 String Msg;
 void setup() {
   // put your setup code here, to run once:
-  esp.begin(9600);
   Serial.begin(9600);
-  xbee.setSerial(esp);
+  xbee.setSerial(Serial);
 }
 
 void loop() {
@@ -58,18 +57,18 @@ void loop() {
   {
     if(xbee.getResponse().getApiId() == ZB_RX_RESPONSE) {
       xbee.getResponse().getZBRxResponse(rx);
-      Serial.print("Se obtuvo algo");
+      Serial.print(" Se obtuvo algo");
       if (rx.getOption() == ZB_PACKET_ACKNOWLEDGED) {
             // the sender got an ACK
-            Serial.println("packet acknowledged");
+            Serial.println(" packet acknowledged");
         } else {
-          Serial.println("packet not acknowledged");
+          Serial.println(" packet not acknowledged");
         }
         for (int i = 0; i < rx.getDataLength(); i++) {
           Serial.write(rx.getData()[i]);
           
         }
-        Msg = StringToCharArray("Se recibio algo",15);
+        Msg = StringToCharArray(" Se recibio algo",15);
         for(int i=0;i<15;i++)
         {
           payload[i]=Msg[i];
@@ -88,7 +87,7 @@ void loop() {
     
   }
   else if (xbee.getResponse().isError()) {
-      Serial.print("error code:");
+      Serial.print(" error code:");
       Serial.println(xbee.getResponse().getErrorCode());
     }
 }
