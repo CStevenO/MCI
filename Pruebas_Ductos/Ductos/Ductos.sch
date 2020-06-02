@@ -14,10 +14,10 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L sensordepresion:SensordePresion U?
+L sensordepresion:SensordePresion U1
 U 1 1 5EC4111F
 P 5250 3550
-F 0 "U?" H 5250 4181 50  0000 C CNN
+F 0 "U1" H 5250 4181 50  0000 C CNN
 F 1 "SensordePresion" H 5250 4090 50  0000 C CNN
 F 2 "Boards:SensorPresion" H 5250 3550 50  0001 C CNN
 F 3 "" H 5250 3550 50  0001 C CNN
@@ -31,12 +31,12 @@ NoConn ~ 5600 3250
 NoConn ~ 4900 3350
 NoConn ~ 4900 3250
 $Comp
-L Connector:Conn_01x04_Female J?
+L Connector:Conn_01x04_Female J1
 U 1 1 5EC41845
 P 5350 4400
-F 0 "J?" V 5196 4548 50  0000 L CNN
+F 0 "J1" V 5196 4548 50  0000 L CNN
 F 1 "Conn_01x04_Female" V 5287 4548 50  0000 L CNN
-F 2 "" H 5350 4400 50  0001 C CNN
+F 2 "TerminalBlock:TerminalBlock_Altech_AK300-4_P5.00mm" H 5350 4400 50  0001 C CNN
 F 3 "~" H 5350 4400 50  0001 C CNN
 	1    5350 4400
 	0    1    1    0   
@@ -64,23 +64,23 @@ Wire Wire Line
 Wire Wire Line
 	5250 4100 5250 4200
 $Comp
-L pspice:R R?
+L pspice:R R1
 U 1 1 5EC4367A
 P 5900 3850
-F 0 "R?" H 5968 3896 50  0000 L CNN
+F 0 "R1" H 5968 3896 50  0000 L CNN
 F 1 "R" H 5968 3805 50  0000 L CNN
-F 2 "" H 5900 3850 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" H 5900 3850 50  0001 C CNN
 F 3 "~" H 5900 3850 50  0001 C CNN
 	1    5900 3850
 	1    0    0    -1  
 $EndComp
 $Comp
-L pspice:R R?
+L pspice:R R2
 U 1 1 5EC43B58
 P 6050 3850
-F 0 "R?" H 6118 3896 50  0000 L CNN
+F 0 "R2" H 6118 3896 50  0000 L CNN
 F 1 "R" H 6118 3805 50  0000 L CNN
-F 2 "" H 6050 3850 50  0001 C CNN
+F 2 "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" H 6050 3850 50  0001 C CNN
 F 3 "~" H 6050 3850 50  0001 C CNN
 	1    6050 3850
 	1    0    0    -1  
@@ -110,10 +110,10 @@ Connection ~ 4700 3950
 Wire Wire Line
 	4700 3950 4700 3450
 $Comp
-L power:GND #PWR?
+L power:GND #PWR0101
 U 1 1 5EC44D38
 P 4450 4000
-F 0 "#PWR?" H 4450 3750 50  0001 C CNN
+F 0 "#PWR0101" H 4450 3750 50  0001 C CNN
 F 1 "GND" H 4455 3827 50  0000 C CNN
 F 2 "" H 4450 4000 50  0001 C CNN
 F 3 "" H 4450 4000 50  0001 C CNN
