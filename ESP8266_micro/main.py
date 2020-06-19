@@ -1,36 +1,51 @@
-# Complete project details at https://RandomNerdTutorials.com
+import machine
+import time
+import ubinascii
+import webrepl
 
-def sub_cb(topic, msg):
-  print((topic, msg))
-  if topic == b'notification' and msg == b'received':
-    print('ESP received hello message')
+from umqtt.simple import MQTTClient
 
-def connect_and_subscribe():
-  global client_id, mqtt_server, topic_sub
-  client = MQTTClient(client_id, mqtt_server)
-  client.set_callback(sub_cb)
-  client.connect()
-  client.subscribe(topic_sub)
-  print('Connected to %s MQTT broker, subscribed to %s topic' % (mqtt_server, topic_sub))
-  return client
+# These defaults are overwritten with the contents of /config.json by load_config()
+CONFIG = {
+    "broker": "mantenimiento.elite.local",
+    "client_id": b"esp8266_" + ubinascii.hexlify(machine.unique_id()),
+    "topic": b"ING_DATOS",
+}
 
-def restart_and_reconnect():
-  print('Failed to connect to MQTT broker. Reconnecting...')
-  time.sleep(10)
-  machine.reset()
+client = None
 
-try:
-  client = connect_and_subscribe()
-except OSError as e:
-  restart_and_reconnect()
+def load_config():
+    import ujson as json
+    try:
+        with open("/config.json") as f:
+            config = json.loads(f.read())
+    except (OSError, ValueError):
+        print("Couldn't load /config.json")
+        save_config()
+    else:
+        CONFIG.update(config)
+        print("Loaded config from /config.json")
 
-while True:
-  try:
-    client.check_msg()
-    if (time.time() - last_message) > message_interval:
-      msg = b'Hello #%d' % counter
-      client.publish(topic_pub, msg)
-      last_message = time.time()
-      counter += 1
-  except OSError as e:
-    restart_and_reconnect()
+def save_config():
+    import ujson as json
+    try:
+        with open("/config.json", "w") as f:
+            f.write(json.dumps(CONFIG))
+    except OSError:
+        print("Couldn't save /config.json")
+
+def main():
+    client = MQTTClient(CONFIG['client_id'], CONFIG['broker'])
+    client.connect()
+    print("Connected to {}".format(CONFIG['broker']))
+    while True:
+        data = sensor_pin.read()
+        client.publish('{}/{}'.format(CONFIG['topic'],
+                                          CONFIG['client_id']),
+                                          bytes(str(data), 'utf-8'))
+        print('Sensor state: {}'.format(data))
+        time.sleep(5)
+
+if __name__ == '__main__':
+    load_config()
+    main()
