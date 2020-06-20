@@ -2,6 +2,9 @@ import machine
 import time
 import ubinascii
 import webrepl
+import ntptime
+
+ntptime.settime()
 
 from umqtt.simple import MQTTClient
 
