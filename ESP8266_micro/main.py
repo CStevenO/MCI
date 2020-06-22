@@ -3,11 +3,20 @@ import time
 import ubinascii
 import webrepl
 import ntptime
+from jq6500 import Player
+
+player = Player(port=1)
+player.set_volume(30)
 
 ntptime.settime()
 
 from umqtt.simple import MQTTClient
 
+player.next()
+time.sleep(5)
+player.prev()
+
+"""
 # These defaults are overwritten with the contents of /config.json by load_config()
 CONFIG = {
     "broker": "mantenimiento.elite.local",
@@ -52,3 +61,4 @@ def main():
 if __name__ == '__main__':
     load_config()
     main()
+"""
