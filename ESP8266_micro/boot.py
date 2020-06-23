@@ -1,12 +1,13 @@
 # Complete project details at https://RandomNerdTutorials.com
+#import webrepl_setup
 
 def do_connect():
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'StevenOr'
+    ssid = 'HUAWEI P30 lite'
     ssidb = str.encode(ssid)
-    password = '1026591258'
+    password = 'Diany123'
     pos = -1
     if not wlan.isconnected():
         while pos == -1:
@@ -25,3 +26,5 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 do_connect()
+import webrepl
+webrepl.start()
