@@ -36,7 +36,10 @@ class Player(object):
                 port (int): UART port # (default: 2).
                 volume(int) : Initial volume (default: 20, range 0-30).
         """
-        self.uart = UART(port, 9600)
+        if port==1:
+            self.uart = UART(port, 9600, tx=19, rx=18)
+        else:
+            self.uart = UART(port, 9600)
         self.uart.read()
         self.reset()
         self.set_volume(volume)

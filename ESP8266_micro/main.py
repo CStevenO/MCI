@@ -4,7 +4,11 @@ import ubinascii
 import webrepl
 import ntptime
 from machine import Pin
+from jq6500 import Player
 
+player = Player(port=1)
+player.set_volume(30)
+"""
 ressi = Pin(15, Pin.IN, Pin.PULL_UP)
 resno = Pin(16, Pin.IN, Pin.PULL_UP)
 
@@ -24,8 +28,12 @@ print ("Fecha: {:02d}/{:02d}/{}".format(RTC().datetime()[2],
 print ("Hora: {:02d}:{:02d}:{:02d}".format(RTC().datetime()[4],
                                            RTC().datetime()[5],
                                            RTC().datetime()[6]))
+"""
+player.play_by_index(1)
+time.sleep(5)
+player.play_by_index(2)
 
-
+"""
 # These defaults are overwritten with the contents of /config.json by load_config()
 CONFIG = {
     "broker": "mantenimiento.elite.local",
@@ -136,3 +144,4 @@ def main():
 if __name__ == '__main__':
     load_config()
     main()
+"""
