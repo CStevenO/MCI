@@ -4,11 +4,21 @@ import ubinascii
 import webrepl
 import ntptime
 from machine import Pin
-from jq6500 import Player
+#from jq6500 import Player
+import mlx90614
+from machine import I2C, Pin
 
+i2c = I2C(scl=Pin(5), sda=Pin(4))
+sensor = mlx90614.MLX90614(i2c)
+
+print(sensor.read_ambient_temp())
+print(sensor.read_object_temp())
+if sensor.dual_zone:
+    print(sensor.object2_temp)
+"""
 player = Player(port=1)
 player.set_volume(30)
-"""
+
 ressi = Pin(15, Pin.IN, Pin.PULL_UP)
 resno = Pin(16, Pin.IN, Pin.PULL_UP)
 
@@ -28,12 +38,12 @@ print ("Fecha: {:02d}/{:02d}/{}".format(RTC().datetime()[2],
 print ("Hora: {:02d}:{:02d}:{:02d}".format(RTC().datetime()[4],
                                            RTC().datetime()[5],
                                            RTC().datetime()[6]))
-"""
+
 player.play_by_index(1)
 time.sleep(5)
 player.play_by_index(2)
 
-"""
+
 # These defaults are overwritten with the contents of /config.json by load_config()
 CONFIG = {
     "broker": "mantenimiento.elite.local",

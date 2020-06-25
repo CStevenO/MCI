@@ -25,6 +25,6 @@ def do_connect():
         while not wlan.isconnected():
             pass
     print('network config:', wlan.ifconfig())
-do_connect()
-import webrepl
-webrepl.start()
+#do_connect()
+#import webrepl
+#webrepl.start()
