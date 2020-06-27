@@ -1,0 +1,12 @@
+"Id";"Identificador";"Empaquetado";"Cantidad";"Identificación";"Suministrador y ref";
+1;"U3";"AMPLIFICADOR";1;"AMPLIFICADOR";;;
+2;"REF**";"ESD-Logo_13.2x12mm_SilkScreen";1;"ESD-Logo_13.2x12mm_SilkScreen";;;
+3;"U1";"ESP32";1;"ESP32";;;
+4;"U2";"LASER";1;"LASER";;;
+5;"U4";"TRINKET_M0";1;"Trinket_M0";;;
+6;"U5";"JQ6500-16p";1;"JQ6500-16P";;;
+7;"U6";"Converter_DCDC_muRata_OKI-78SR_Vertical";1;"L7805";;;
+8;"U7,U8";"BOTON_IR";2;"Boton_IR";;;
+9;"U9";"MXL90614";1;"MLX90614";;;
+10;"U10";"SOURCE";1;"SOURCE";;;
+11;"C1,C2";"CAP_1uf";2;"CP";;;
