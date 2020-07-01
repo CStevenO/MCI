@@ -38,7 +38,6 @@ class Player(object):
         """
         if port==1:
             self.uart = UART(port, 9600, tx=19, rx=18)
-            print('hola')
         else:
             self.uart = UART(port, 9600)
         self.uart.read()

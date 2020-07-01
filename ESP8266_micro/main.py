@@ -4,24 +4,38 @@ import time
 import ubinascii
 import ntptime
 import mlx90614
+import machine
 
 player = Player(port=1, volume=30)
-i2c = I2C(scl=Pin(22), sda=Pin(21))
-sensor = mlx90614.MLX90614(i2c)
+try:
+    conexion()
+except:
+    time.sleep(2)
+    conexion()
+
 uart = UART(2, 115200)
-sr=b""
+
+#ntptime.settime()
+
+from machine import RTC
+#(year, month, mday, week_of_year, hour, minute, second, milisecond)=RTC().datetime()
+#RTC().datetime((year, month, mday, week_of_year, hour-5, minute, second, milisecond))
+
+def conexion():
+    i2c = I2C(scl=Pin(22), sda=Pin(21), freq=100000)
+    sensor = mlx90614.MLX90614(i2c)
 
 def read_tem():
     laser.value(1)
-    while sensor.read_object_temp() < 34:
+    while (sensor.read_object_temp() <= 34:
         pass
     prom = 0
-    for i in range(20):
+    for i in range(40):
         prom = prom + sensor.read_object_temp()
-        time.sleep_ms(50)
-    prom = prom/20
-    return prom
+        time.sleep_ms(25)
+    prom = prom/40
     laser.value(0)
+    return prom
 
 def load_config():
     import ujson as json
@@ -43,7 +57,8 @@ def save_config():
     except OSError:
         print("Couldn't save /config.json")
 
-def pregun(respu):
+def pregun():
+    global persona
     ver = True
     while ver:
         si = ressi.value()
@@ -55,11 +70,13 @@ def pregun(respu):
         while ressi.value()==0 or resno.value()==0:
             time.sleep_ms(750)
         if si==0 and no==1:
-            persona.update({respu: 1})
+            #persona.update({respu: 1})
             ver = 0
+            return 1
         elif no==0 and si==1:
-            persona.update({respu: 0})
+            #persona.update({respu: 0})
             ver = 0
+            return 0
         elif no==0 and si==0:
             #sonar audio 02.mp3  de por favor nada mas si o no
             ver = True
@@ -90,37 +107,43 @@ def main():
     client.connect()
     print("Connected to {}".format(CONFIG['broker']))
     """
+    sr=b""
     while True:
-        data = uart.read(1)
-        while data is None:
+        while True:
+            while uart.any() is 0:
+                pass
             data = uart.read(1)
-        while data is not b"\r":
-            sr=sr+data
-            data = uart.read(1)
-        codigo=sr.decode("utf-8")[0:len(b)-3]
-        sr=b""
+            if data==b"\r":
+                codigo=sr.decode("utf-8")[0:len(sr)-3]
+                sr=b""
+                break
+            elif data is not None:
+                sr=sr+data
         #client.publish('{},{};'.format(CONFIG['topic'],codigo))
         #4. Espera confirmacion
         #5. Recibe los datos
         #5.1. Suena audio 00.mp3  audio de bienvenido
         persona = {
-          "codigo": 16523, #toca agregarle el codigo que ingresa de la respuesta
+          "codigo": codigo, #toca agregarle el codigo que ingresa de la respuesta
           "cedula": 1026591258, #toca agregarle la cedula que ingresa de la respuesta
           "tipo": 01, #toca revisar como se hace eso
           "finca": CONFIG['finca'], #mirar id finca
           "equipo": CONFIG['equipo'], #mirar equipo
         }
         #5.2. Suena audio 01.mp3 audio para pedir la temperatura
-        tem = read_tem() #asignar temperatura del sensor
+        tem = read_tem()
+        print(tem) #asignar temperatura del sensor
         persona.update({"temperatura": tem})
-        time.sleep(3)
+        time.sleep(1)
         player.play_by_index(2)
-        pregun("Res1")
+        persona.update({"Res1": pregun()})
         player.play_by_index(1)
-        pregun("Res2")
+        persona.update({"Res2": pregun()})
+        player.pause()
         #7. Crea trama para enviar
         persona.update({"ingreso": 12})
-        #persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(RTC.datetime()[0],RTC.datetime()[1],RTC.datetime()[2],RTC.datetime()[4],RTC.datetime()[5],RTC.datetime()[6]))
+        print(persona)
+        #persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(RTC.datetime()[0],RTC.datetime()[1],RTC.datetime()[2],RTC.datetime()[4],RTC.datetime()[5],RTC.datetime()[6])})
         trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
         #8. Envia trama
         print(trama)
@@ -129,6 +152,8 @@ def main():
         #9.1 Suena audio 05.mp3  audio de registro exitoso
         persona.clear()
         print(persona)
+        while uart.any() is not 0:
+            uart.read(1)
 
 if __name__ == '__main__':
     load_config()
