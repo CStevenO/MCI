@@ -81,7 +81,7 @@ Text GLabel 9200 5200 1    50   Input ~ 0
 GND
 Wire Wire Line
 	9200 5200 9200 5350
-Text GLabel 2750 5000 2    50   Input ~ 0
+Text GLabel 1500 5400 0    50   Input ~ 0
 TX_RX_AUDIO
 Text GLabel 3800 2250 2    50   Input ~ 0
 TX_RX_AUDIO
@@ -89,7 +89,7 @@ Wire Wire Line
 	3800 2250 3600 2250
 Wire Wire Line
 	2750 5000 2600 5000
-Text GLabel 2750 5100 2    50   Input ~ 0
+Text GLabel 1500 5500 0    50   Input ~ 0
 RX_TX_AUDIO
 Text GLabel 3800 2150 2    50   Input ~ 0
 RX_TX_AUDIO
@@ -400,14 +400,10 @@ NoConn ~ 4550 5350
 NoConn ~ 4550 5250
 NoConn ~ 4550 5150
 NoConn ~ 4550 5050
-NoConn ~ 2600 4400
 NoConn ~ 2600 4600
 NoConn ~ 2600 4700
 NoConn ~ 2600 5200
-NoConn ~ 2600 5500
 NoConn ~ 2600 5600
-NoConn ~ 2600 5700
-NoConn ~ 2600 5800
 NoConn ~ 2600 5900
 NoConn ~ 2600 6000
 NoConn ~ 2600 6100
@@ -415,8 +411,6 @@ NoConn ~ 1600 6000
 NoConn ~ 1600 5900
 NoConn ~ 1600 5700
 NoConn ~ 1600 5800
-NoConn ~ 1600 5500
-NoConn ~ 1600 5400
 NoConn ~ 1600 5000
 NoConn ~ 1600 4900
 NoConn ~ 1600 4800
@@ -511,4 +505,85 @@ SENSOR
 Text Notes 8400 1000 2    50   ~ 0
 SWITCHES RESPUESTAS\n
 NoConn ~ 2750 2050
+Wire Wire Line
+	1500 5400 1600 5400
+Wire Wire Line
+	1500 5500 1600 5500
+Text GLabel 2750 4400 2    50   Input ~ 0
+MOSI
+Wire Wire Line
+	2600 4400 2750 4400
+Text GLabel 2750 5000 2    50   Input ~ 0
+MISO
+Text GLabel 2750 5100 2    50   Input ~ 0
+SCK
+$Comp
+L covid:Pantalla_SPI U11
+U 1 1 5F03D09D
+P 5550 3050
+F 0 "U11" H 6128 2596 50  0000 L CNN
+F 1 "Pantalla_SPI" H 6128 2505 50  0000 L CNN
+F 2 "Covid:Pantalla_spi" H 5550 3050 50  0001 C CNN
+F 3 "" H 5550 3050 50  0001 C CNN
+	1    5550 3050
+	1    0    0    -1  
+$EndComp
+Text GLabel 5600 3150 0    50   Input ~ 0
+MISO
+Text GLabel 5600 3250 0    50   Input ~ 0
+VCC_5V
+Text GLabel 5600 3350 0    50   Input ~ 0
+SCK
+Text GLabel 5600 3450 0    50   Input ~ 0
+MOSI
+Text GLabel 5600 3550 0    50   Input ~ 0
+DC
+Text GLabel 5600 3650 0    50   Input ~ 0
+RESET
+Text GLabel 5600 3750 0    50   Input ~ 0
+CS
+Text GLabel 5600 3850 0    50   Input ~ 0
+GND
+Text GLabel 5600 3950 0    50   Input ~ 0
+VCC_3V
+Wire Wire Line
+	5600 3150 5700 3150
+Wire Wire Line
+	5600 3250 5700 3250
+Wire Wire Line
+	5600 3350 5700 3350
+Wire Wire Line
+	5600 3450 5700 3450
+Wire Wire Line
+	5600 3550 5700 3550
+Wire Wire Line
+	5600 3650 5700 3650
+Wire Wire Line
+	5600 3750 5700 3750
+Wire Wire Line
+	5600 3850 5700 3850
+Wire Wire Line
+	5600 3950 5700 3950
+Wire Notes Line
+	5050 2950 6650 2950
+Wire Notes Line
+	6650 2950 6650 4150
+Wire Notes Line
+	6650 4150 5050 4150
+Wire Notes Line
+	5050 4150 5050 2950
+Text Notes 5050 2950 0    50   ~ 0
+Pantalla
+Text GLabel 2750 5800 2    50   Input ~ 0
+CS
+Text GLabel 2750 5700 2    50   Input ~ 0
+RESET
+Text GLabel 2750 5500 2    50   Input ~ 0
+DC
+Wire Wire Line
+	2600 5500 2750 5500
+Wire Wire Line
+	2600 5700 2750 5700
+Wire Wire Line
+	2600 5800 2750 5800
 $EndSCHEMATC
