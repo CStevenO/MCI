@@ -26,5 +26,5 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 do_connect()
-#import webrepl
-#webrepl.start()
+import webrepl
+webrepl.start()
