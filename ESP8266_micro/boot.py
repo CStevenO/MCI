@@ -5,9 +5,9 @@ def do_connect():
     import network
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'MTOinvernadero'
+    ssid = 'Steven'
     ssidb = str.encode(ssid)
-    password = 'MTOinv2017'
+    password = '1026591258'
     pos = -1
     if not wlan.isconnected():
         while pos == -1:
@@ -26,5 +26,5 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 do_connect()
-import webrepl
-webrepl.start()
+#import webrepl
+#webrepl.start()
