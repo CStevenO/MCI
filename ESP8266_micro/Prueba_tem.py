@@ -37,10 +37,10 @@ def read_tem():
             pass
         time.sleep(0.5)
         prom = 0
-        for i in range(40):
+        for i in range(30):
             prom = prom + sensor.read_object_temp()
-            time.sleep_ms(25)
-        prom = prom/40
+            time.sleep_ms(30)
+        prom = prom/30
         laser.value(0)
         return prom
     except:

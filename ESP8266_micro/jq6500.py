@@ -37,7 +37,7 @@ class Player(object):
                 volume(int) : Initial volume (default: 20, range 0-30).
         """
         if port==1:
-            self.uart = UART(port, 9600, tx=14, rx=12)
+            self.uart = UART(port, 9600, tx=19, rx=18)
         else:
             self.uart = UART(port, 9600)
         self.uart.read()
