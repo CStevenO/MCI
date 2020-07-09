@@ -4,7 +4,6 @@ from mqtt import MQTTClient
 import micropython
 import time
 import ubinascii
-import ntptime
 import mlx90614
 import machine
 import math
@@ -12,7 +11,6 @@ import math
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
 
-ntptime.settime()
 
 from machine import RTC
 (year, month, mday, week_of_year, hour, minute, second, milisecond)=RTC().datetime()
@@ -161,6 +159,7 @@ def main():
         Reinciar_conexion()
     except:
         Reinciar_conexion()
+    player.play_by_index(10)
     while True:
         print("hola")
         codigo_de_barras()

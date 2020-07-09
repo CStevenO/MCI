@@ -1,0 +1,7 @@
+from jq6500 import Player
+
+player = Player(port=1, volume=30)
+
+ho = "1026591258"
+
+for i in range(len(ho)):
