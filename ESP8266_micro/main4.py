@@ -4,17 +4,20 @@ from mqtt import MQTTClient
 import micropython
 import time
 import ubinascii
+import ntptime
 import mlx90614
 import machine
 import math
 
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
-
+"""
+ntptime.settime()
 
 from machine import RTC
-rtc = RTC()
-
+(year, month, mday, week_of_year, hour, minute, second, milisecond)=RTC().datetime()
+RTC().datetime((year, month, mday, week_of_year, hour-5, minute, second, milisecond))
+"""
 def conexion():
     try:
         i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
@@ -27,7 +30,7 @@ def conexion():
 def Conexion_MQTT():
     client_id = b"Covid_" + ubinascii.hexlify(unique_id())
     #client_id = b"covid"
-    mqtt_server = 'mantenimiento.elite.local'
+    mqtt_server = '10.50.1.153'
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
     pswd_mqtt = None #Si su servidor no necesita contraseña escribe None sin comillas
@@ -35,7 +38,6 @@ def Conexion_MQTT():
     client.set_callback(form_sub)
     client.connect()
     client.subscribe(b'SAL_DA')
-    client.subscribe(b'HORA')
     print('Conectado a %s' % mqtt_server)
     return client
 
@@ -126,12 +128,7 @@ def codigo_de_barras():
 def form_sub(topic, msg):
     global mensaje, espera
     mensaje = msg.decode()
-    if topic.decode() is "HORA":
-        dat = mensaje.replace(";","").split(",")
-        rtc.datetime((dat[0],dat[1],dat[2],0,dat[3],dat[4],dat[5]))
-        print(rtc.datetime())
-    elif topic.decode() is "SAL_DA":
-        espera = True
+    espera = True
 
 ressi = Pin(27, Pin.IN, Pin.PULL_UP)
 resno = Pin(26, Pin.IN, Pin.PULL_UP)
@@ -164,7 +161,6 @@ def main():
         Reinciar_conexion()
     except:
         Reinciar_conexion()
-    player.play_by_index(10)
     while True:
         print("hola")
         codigo_de_barras()
@@ -206,8 +202,8 @@ def main():
         persona.update({"Res2": pregun()})
         #player.pause()
         #7. Crea trama para enviar
-        #persona.update({"ingreso": 12})
-        persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(rtc.datetime()[0],rtc.datetime()[1],rtc.datetime()[2],rtc.datetime()[4],rtc.datetime()[5],rtc.datetime()[6])})
+        persona.update({"ingreso": 12})
+        #persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(RTC().datetime()[0],RTC().datetime()[1],RTC().datetime()[2],RTC().datetime()[4],RTC().datetime()[5],RTC().datetime()[6])})
         trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
         #8. Envia trama
         print(trama)
