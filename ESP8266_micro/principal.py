@@ -15,11 +15,19 @@ uart = UART(2, 115200)
 from machine import RTC
 rtc = RTC()
 
+def conexion():
+    try:
+        i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
+        sensor = mlx90614.MLX90614(i2c)
+    except:
+        print("conectando...")
+        time.sleep(2)
+        conexion()
 
 def Conexion_MQTT():
     client_id = b"Covid_" + ubinascii.hexlify(unique_id())
     #client_id = b"covid"
-    mqtt_server = '10.50.1.153'
+    mqtt_server = 'mantenimiento.elite.local'
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
     pswd_mqtt = None #Si su servidor no necesita contraseña escribe None sin comillas
@@ -27,6 +35,7 @@ def Conexion_MQTT():
     client.set_callback(form_sub)
     client.connect()
     client.subscribe(b'SAL_DA')
+    client.subscribe(b'HORA')
     print('Conectado a %s' % mqtt_server)
     return client
 
@@ -39,18 +48,19 @@ def Reinciar_conexion():
 def read_tem():
     try:
         laser.value(1)
-        while sensor.read_object_temp() <= 30:
+        while sensor.read_object_temp() <= 25:
             pass
         time.sleep(0.5)
         prom = 0
-        for i in range(20):
+        for i in range(30):
             prom = prom + sensor.read_object_temp()
-            time.sleep_ms(50)
-        prom = prom/20
+            time.sleep_ms(30)
+        prom = prom/30
         laser.value(0)
         return prom
     except:
         print("Error")
+        read_tem()
 
 def load_config():
     import ujson as json
@@ -122,7 +132,6 @@ def form_sub(topic, msg):
         print(rtc.datetime())
     elif topic.decode() is "SAL_DA":
         espera = True
-        print(mensaje)
 
 ressi = Pin(27, Pin.IN, Pin.PULL_UP)
 resno = Pin(26, Pin.IN, Pin.PULL_UP)
@@ -142,40 +151,19 @@ sr=b""
 mensaje = ""
 espera = False
 codigo = ""
-
-if __name__ == '__main__':
-    mensaje2 = ["","",""]
-    save_config()
-    load_config()
-    try:
-        i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
-        sensor = mlx90614.MLX90614(i2c)
-    except:
-        print("conectando...")
-        sensor = mlx90614.MLX90614(i2c)
+def main():
     """
     client = MQTTClient(CONFIG['client_id'], CONFIG['broker'])
     client.connect()
     print("Connected to {}".format(CONFIG['broker']))
     """
+    global sr,mensaje,espera,codigo
     try:
         client = Conexion_MQTT()
     except OSError as e:
         Reinciar_conexion()
     except:
         Reinciar_conexion()
-    try:
-        disp_pub = client.check_msg()
-        client.publish(b'ING_DATOS', b'00,16523')
-        time.sleep(3)
-    except OSError as e:
-        Reinciar_conexion()
-    try:
-        print(mensaje2[1])
-    except:
-        time.sleep(2)
-        mensaje2 = mensaje.replace(";","").split(",")
-        print(mensaje2[1])
     player.play_by_index(10)
     while True:
         print("hola")
@@ -189,6 +177,9 @@ if __name__ == '__main__':
         except OSError as e:
             Reinciar_conexion()
         time.sleep(1)
+        while espera is not True:
+            pass
+        espera = False
         #5. Recibe los datos
         mensaje2 = mensaje.replace(";","").split(",")
         #5.1. Suena audio 00.mp3  audio de bienvenido
@@ -203,13 +194,9 @@ if __name__ == '__main__':
         }
         #5.2. Suena audio 01.mp3 audio para pedir la temperatura
         player.play_by_index(19)
-        """
         x = read_tem()
-        print(x)
         #print(x)
-        tem = 1.4424*x-0.0154*x*x+2.2569
-        """
-        tem=37
+        tem = CONFIG["A"]*x*x+CONFIG["B"]*x+CONFIG["C"]
         #print(tem) #asignar temperatura del sensor
         persona.update({"temperatura": tem})
         time.sleep(1)
@@ -231,9 +218,11 @@ if __name__ == '__main__':
         except OSError as e:
             Reinciar_conexion()
         #client.publish('{},{}'.format(CONFIG['topic'],trama))
-        time.sleep(4)
-        print(mensaje)
-        if mensaje is "Exitoso":
+        while espera is not True:
+            pass
+        espera = False
+        mensaje2 = mensaje.replace(";","").split(",")
+        if mensaje2 == "Exitoso":
             player.play_by_index(15) #exitoso
         else:
             player.play_by_index(14) #fallido
@@ -243,3 +232,9 @@ if __name__ == '__main__':
         print(persona)
         while uart.any() is not 0:
             uart.read(1)
+
+if __name__ == '__main__':
+    save_config()
+    load_config()
+    conexion()
+    main()
