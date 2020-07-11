@@ -39,8 +39,8 @@ def Reinciar_conexion():
 def read_tem():
     try:
         laser.value(1)
-        while sensor.read_object_temp() <= 30:
-            pass
+        while sensor.read_object_temp() <= 35:
+            time.sleep(1)
         time.sleep(0.5)
         prom = 0
         for i in range(20):
@@ -203,13 +203,12 @@ if __name__ == '__main__':
         }
         #5.2. Suena audio 01.mp3 audio para pedir la temperatura
         player.play_by_index(19)
-        """
         x = read_tem()
         print(x)
         #print(x)
         tem = 1.4424*x-0.0154*x*x+2.2569
-        """
-        tem=37
+
+        #tem=37
         #print(tem) #asignar temperatura del sensor
         persona.update({"temperatura": tem})
         time.sleep(1)
