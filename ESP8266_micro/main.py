@@ -39,7 +39,11 @@ def Reinciar_conexion():
 def read_tem():
     try:
         laser.value(1)
+<<<<<<< HEAD
         while sensor.read_object_temp() <= 30:
+=======
+        while sensor.read_object_temp() <= 35:
+>>>>>>> 7eeb0d05285e06c5fe60d5c4acc4af090eeb3bdc
             time.sleep(1)
         time.sleep(0.5)
         prom = 0
@@ -195,7 +199,15 @@ if __name__ == '__main__':
         player.play_by_index(19)
         x = read_tem()
         print(x)
+<<<<<<< HEAD
         tem = 1.4424*x-0.0154*x**2+2.2569
+=======
+        #print(x)
+        tem = 1.4424*x-0.0154*x*x+2.2569
+
+        #tem=37
+        #print(tem) #asignar temperatura del sensor
+>>>>>>> 7eeb0d05285e06c5fe60d5c4acc4af090eeb3bdc
         persona.update({"temperatura": tem})
         time.sleep(1)
         player.play_by_index(18)
