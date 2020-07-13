@@ -26,6 +26,7 @@ def Conexion_MQTT():
     client = MQTTClient(client_id, mqtt_server,port_mqtt,user_mqtt,pswd_mqtt)
     client.set_callback(form_sub)
     client.connect()
+    client.subscribe(b'HORA')
     client.subscribe(b'SAL_DA')
     print('Conectado a %s' % mqtt_server)
     return client
@@ -35,12 +36,11 @@ def Reinciar_conexion():
     time.sleep(10)
     machine.reset()
 
-
 def read_tem():
     try:
         laser.value(1)
         while sensor.read_object_temp() <= 30:
-            pass
+            time.sleep(1)
         time.sleep(0.5)
         prom = 0
         for i in range(20):
@@ -118,7 +118,7 @@ def form_sub(topic, msg):
     mensaje = msg.decode()
     if topic.decode() is "HORA":
         dat = mensaje.replace(";","").split(",")
-        rtc.datetime((dat[0],dat[1],dat[2],0,dat[3],dat[4],dat[5]))
+        rtc.datetime((dat[1],dat[2],dat[3],0,dat[4],dat[5],dat[6]))
         print(rtc.datetime())
     elif topic.decode() is "SAL_DA":
         espera = True
@@ -145,7 +145,6 @@ codigo = ""
 
 if __name__ == '__main__':
     mensaje2 = ["","",""]
-    save_config()
     load_config()
     try:
         i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
@@ -153,11 +152,6 @@ if __name__ == '__main__':
     except:
         print("conectando...")
         sensor = mlx90614.MLX90614(i2c)
-    """
-    client = MQTTClient(CONFIG['client_id'], CONFIG['broker'])
-    client.connect()
-    print("Connected to {}".format(CONFIG['broker']))
-    """
     try:
         client = Conexion_MQTT()
     except OSError as e:
@@ -167,20 +161,20 @@ if __name__ == '__main__':
     try:
         disp_pub = client.check_msg()
         client.publish(b'ING_DATOS', b'00,16523')
-        time.sleep(3)
     except OSError as e:
         Reinciar_conexion()
+    client.wait_msg()
     try:
         print(mensaje2[1])
     except:
         time.sleep(2)
         mensaje2 = mensaje.replace(";","").split(",")
         print(mensaje2[1])
+    time.sleep(2)
     player.play_by_index(10)
     while True:
         print("hola")
         codigo_de_barras()
-        #client.publish('{},{};'.format(CONFIG['topic'],b"01," + codigo))
         codigo = "00," + codigo + ";"
         try:
             disp_pub = client.check_msg()
@@ -188,58 +182,44 @@ if __name__ == '__main__':
             time.sleep(.1)
         except OSError as e:
             Reinciar_conexion()
-        time.sleep(1)
-        #5. Recibe los datos
+        client.wait_msg()
         mensaje2 = mensaje.replace(";","").split(",")
-        #5.1. Suena audio 00.mp3  audio de bienvenido
         persona = {
           "codigo": codigo, #toca agregarle el codigo que ingresa de la respuesta
-          #"cedula": 12312412,
           "cedula": mensaje2[2], #toca agregarle la cedula que ingresa de la respuesta
           "Nombre": mensaje2[1],
           "tipo": 01, #toca revisar como se hace eso
           "finca": CONFIG['finca'], #mirar id finca
           "equipo": CONFIG['equipo'], #mirar equipo
         }
-        #5.2. Suena audio 01.mp3 audio para pedir la temperatura
         player.play_by_index(19)
-        """
         x = read_tem()
         print(x)
-        #print(x)
-        tem = 1.4424*x-0.0154*x*x+2.2569
-        """
-        tem=37
-        #print(tem) #asignar temperatura del sensor
+        tem = 1.4424*x-0.0154*x**2+2.2569
         persona.update({"temperatura": tem})
         time.sleep(1)
         player.play_by_index(18)
         persona.update({"Res1": pregun()})
         player.play_by_index(17)
         persona.update({"Res2": pregun()})
-        #player.pause()
-        #7. Crea trama para enviar
-        #persona.update({"ingreso": 12})
         persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(rtc.datetime()[0],rtc.datetime()[1],rtc.datetime()[2],rtc.datetime()[4],rtc.datetime()[5],rtc.datetime()[6])})
         trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
-        #8. Envia trama
         print(trama)
-        try:
-            disp_pub = client.check_msg()
-            client.publish(b'ING_DATOS', trama.encode())
-            time.sleep(.1)
-        except OSError as e:
-            Reinciar_conexion()
-        #client.publish('{},{}'.format(CONFIG['topic'],trama))
-        time.sleep(4)
-        print(mensaje)
-        if mensaje is "Exitoso":
-            player.play_by_index(15) #exitoso
-        else:
-            player.play_by_index(14) #fallido
-        #9. Le dice al usuario que el registro fue exitoso
-        #9.1 Suena audio 05.mp3  audio de registro exitoso
-        persona.clear()
-        print(persona)
+        player.play_by_index(11)
+        if pregun() is 0:
+            try:
+                disp_pub = client.check_msg()
+                client.publish(b'ING_DATOS', trama.encode())
+                time.sleep(.1)
+            except OSError as e:
+                Reinciar_conexion()
+            client.wait_msg()
+            print(mensaje)
+            if mensaje is "Exitoso":
+                player.play_by_index(15) #exitoso
+            else:
+                player.play_by_index(14) #fallido
+            persona.clear()
+            print(persona)
         while uart.any() is not 0:
             uart.read(1)
