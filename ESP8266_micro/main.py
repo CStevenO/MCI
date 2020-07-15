@@ -39,11 +39,7 @@ def Reinciar_conexion():
 def read_tem():
     try:
         laser.value(1)
-<<<<<<< HEAD
         while sensor.read_object_temp() <= 30:
-=======
-        while sensor.read_object_temp() <= 35:
->>>>>>> 7eeb0d05285e06c5fe60d5c4acc4af090eeb3bdc
             time.sleep(1)
         time.sleep(0.5)
         prom = 0
@@ -131,6 +127,7 @@ def form_sub(topic, msg):
 ressi = Pin(27, Pin.IN, Pin.PULL_UP)
 resno = Pin(26, Pin.IN, Pin.PULL_UP)
 laser = Pin(25, Pin.OUT)
+alarma = Pin(14, Pin.OUT)
 CONFIG = {
     "broker": "mantenimiento.elite.local",
     "client_id": b"esp8266_" + ubinascii.hexlify(machine.unique_id()),
@@ -199,15 +196,7 @@ if __name__ == '__main__':
         player.play_by_index(19)
         x = read_tem()
         print(x)
-<<<<<<< HEAD
         tem = 1.4424*x-0.0154*x**2+2.2569
-=======
-        #print(x)
-        tem = 1.4424*x-0.0154*x*x+2.2569
-
-        #tem=37
-        #print(tem) #asignar temperatura del sensor
->>>>>>> 7eeb0d05285e06c5fe60d5c4acc4af090eeb3bdc
         persona.update({"temperatura": tem})
         time.sleep(1)
         player.play_by_index(18)
@@ -219,6 +208,11 @@ if __name__ == '__main__':
         print(trama)
         player.play_by_index(11)
         if pregun() is 0:
+            if persona["Res1"] is 1 or persona["Res2"] is 1 or tem >= 38:
+                player.play_by_index(20)
+                time.sleep(1)
+                player.play_by_index(21)
+                time.sleep(3)
             try:
                 disp_pub = client.check_msg()
                 client.publish(b'ING_DATOS', trama.encode())
