@@ -181,6 +181,9 @@ if __name__ == '__main__':
     while True:
         print("hola")
         codigo_de_barras()
+        if codigo=="16523":
+            if pregun() == 1:
+                sys.exit()
         codigo = "00," + codigo + ";"
         try:
             disp_pub = client.check_msg()
@@ -190,55 +193,58 @@ if __name__ == '__main__':
             Reinciar_conexion()
         client.wait_msg()
         mensaje2 = mensaje.replace(";","").split(",")
-        persona = {
-          "codigo": codigo, #toca agregarle el codigo que ingresa de la respuesta
-          "cedula": mensaje2[2], #toca agregarle la cedula que ingresa de la respuesta
-          "Nombre": mensaje2[1],
-          "tipo": 01, #toca revisar como se hace eso
-          "finca": CONFIG['finca'], #mirar id finca
-          "equipo": CONFIG['equipo'], #mirar equipo
-        }
-        player.play_by_index(19)
-        x = read_tem()
-        if x == 0:
-            contador = contador + 1
-        if contador >= 2:
-            player.play_by_index(14)
-            machine.reset()
-        #tem = 1.4424*x-0.0154*x**2+2.2569
-        tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
-        if tem < 25:
+        if mensaje2 == "NO":
             player.play_by_index(14)
         else:
-            contador = 0
-            persona.update({"temperatura": tem})
-            time.sleep(1)
-            player.play_by_index(18)
-            persona.update({"Res1": pregun()})
-            player.play_by_index(17)
-            persona.update({"Res2": pregun()})
-            persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(rtc.datetime()[0],rtc.datetime()[1],rtc.datetime()[2],rtc.datetime()[4],rtc.datetime()[5],rtc.datetime()[6])})
-            trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
-            print(trama)
-            player.play_by_index(11)
-            if pregun() is 0:
-                if persona["Res1"] is 1 or persona["Res2"] is 1 or tem >= 38:
-                    player.play_by_index(20)
-                    time.sleep(1)
-                    player.play_by_index(21)
-                    time.sleep(3)
-                try:
-                    disp_pub = client.check_msg()
-                    client.publish(b'ING_DATOS', trama.encode())
-                    time.sleep(.1)
-                except OSError as e:
-                    Reinciar_conexion()
-                client.wait_msg()
-                print(mensaje)
-                if mensaje is "Exitoso":
-                    player.play_by_index(15) #exitoso
-                else:
-                    player.play_by_index(14) #fallido
+            persona = {
+              "codigo": codigo, #toca agregarle el codigo que ingresa de la respuesta
+              "cedula": mensaje2[2], #toca agregarle la cedula que ingresa de la respuesta
+              "Nombre": mensaje2[1],
+              "tipo": 01, #toca revisar como se hace eso
+              "finca": CONFIG['finca'], #mirar id finca
+              "equipo": CONFIG['equipo'], #mirar equipo
+            }
+            player.play_by_index(19)
+            x = read_tem()
+            if x == 0:
+                contador = contador + 1
+            if contador >= 2:
+                player.play_by_index(14)
+                machine.reset()
+            #tem = 1.4424*x-0.0154*x**2+2.2569
+            tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
+            if tem < 25:
+                player.play_by_index(14)
+            else:
+                contador = 0
+                persona.update({"temperatura": tem})
+                time.sleep(1)
+                player.play_by_index(18)
+                persona.update({"Res1": pregun()})
+                player.play_by_index(17)
+                persona.update({"Res2": pregun()})
+                persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(rtc.datetime()[0],rtc.datetime()[1],rtc.datetime()[2],rtc.datetime()[4],rtc.datetime()[5],rtc.datetime()[6])})
+                trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
+                print(trama)
+                player.play_by_index(11)
+                if pregun() is 0:
+                    if persona["Res1"] is 1 or persona["Res2"] is 1 or tem >= 38:
+                        player.play_by_index(20)
+                        time.sleep(1)
+                        player.play_by_index(21)
+                        time.sleep(3)
+                    try:
+                        disp_pub = client.check_msg()
+                        client.publish(b'ING_DATOS', trama.encode())
+                        time.sleep(.1)
+                    except OSError as e:
+                        Reinciar_conexion()
+                    client.wait_msg()
+                    print(mensaje)
+                    if mensaje is "Exitoso":
+                        player.play_by_index(15) #exitoso
+                    else:
+                        player.play_by_index(14) #fallido
         persona.clear()
         print(persona)
         while uart.any() is not 0:
