@@ -40,10 +40,10 @@ def read_tem():
     try:
         laser.value(1)
         start = time.ticks_ms()
-        while sensor.read_object_temp() <= 30:
+        while sensor.read_object_temp() < 25:
             time.sleep(0.5)
             delta = time.ticks_diff(time.ticks_ms(), start)
-            if delta >= 5000:
+            if delta >= 10000:
                 return 1
         time.sleep(0.5)
         prom = 0
@@ -176,7 +176,7 @@ if __name__ == '__main__':
         time.sleep(2)
         mensaje2 = mensaje.replace(";","").split(",")
         print(mensaje2[1])
-    time.sleep(2)
+    time.sleep(1)
     player.play_by_index(10)
     while True:
         print("hola")
@@ -200,13 +200,13 @@ if __name__ == '__main__':
         }
         player.play_by_index(19)
         x = read_tem()
-        if x = 0:
+        if x == 0:
             contador = contador + 1
         if contador >= 2:
             player.play_by_index(14)
             machine.reset()
         tem = 1.4424*x-0.0154*x**2+2.2569
-        if tem < 30:
+        if tem < 25:
             player.play_by_index(14)
         else:
             contador = 0
