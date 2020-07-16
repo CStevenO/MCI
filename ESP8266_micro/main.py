@@ -205,7 +205,8 @@ if __name__ == '__main__':
         if contador >= 2:
             player.play_by_index(14)
             machine.reset()
-        tem = 1.4424*x-0.0154*x**2+2.2569
+        #tem = 1.4424*x-0.0154*x**2+2.2569
+        tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
         if tem < 25:
             player.play_by_index(14)
         else:
