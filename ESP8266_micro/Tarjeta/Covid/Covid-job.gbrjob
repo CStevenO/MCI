@@ -7,7 +7,7 @@
       "Application": "Pcbnew",
       "Version":     "(5.1.6)-1"
     },
-    "CreationDate":  "2020-07-07T09:56:18-05:00"
+    "CreationDate":  "2020-07-17T12:23:21-05:00"
   },
   "GeneralSpecs":
   {
@@ -32,7 +32,7 @@
       "PadToPad":  0.200,
       "PadToTrack":  0.200,
       "TrackToTrack":  0.200,
-      "MinLineWidth":  1.200,
+      "MinLineWidth":  1.000,
       "TrackToRegion":  0.508,
       "RegionToRegion":  0.508
     }
@@ -47,26 +47,6 @@
     {
       "Path":  "Covid-B_Cu.gbr",
       "FileFunction":  "Copper,L2,Bot",
-      "FilePolarity":  "Positive"
-    },
-    {
-      "Path":  "Covid-F_Adhes.gbr",
-      "FileFunction":  "Glue,Top",
-      "FilePolarity":  "Positive"
-    },
-    {
-      "Path":  "Covid-B_Adhes.gbr",
-      "FileFunction":  "Glue,Bot",
-      "FilePolarity":  "Positive"
-    },
-    {
-      "Path":  "Covid-F_Paste.gbr",
-      "FileFunction":  "SolderPaste,Top",
-      "FilePolarity":  "Positive"
-    },
-    {
-      "Path":  "Covid-B_Paste.gbr",
-      "FileFunction":  "SolderPaste,Bot",
       "FilePolarity":  "Positive"
     },
     {
@@ -98,11 +78,6 @@
       "Path":  "Covid-F_Fab.gbr",
       "FileFunction":  "AssemblyDrawing,Top",
       "FilePolarity":  "Positive"
-    },
-    {
-      "Path":  "Covid-B_Fab.gbr",
-      "FileFunction":  "AssemblyDrawing,Bot",
-      "FilePolarity":  "Positive"
     }
   ],
   "MaterialStackup":
@@ -110,10 +85,6 @@
     {
       "Type":  "Legend",
       "Notes":  "Layer F.SilkS"
-    },
-    {
-      "Type":  "SolderPaste",
-      "Notes":  "Layer F.Paste"
     },
     {
       "Type":  "SolderMask",
@@ -135,10 +106,6 @@
     {
       "Type":  "SolderMask",
       "Notes":  "Layer B.Mask"
-    },
-    {
-      "Type":  "SolderPaste",
-      "Notes":  "Layer B.Paste"
     },
     {
       "Type":  "Legend",
