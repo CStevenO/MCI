@@ -7,6 +7,7 @@ import ubinascii
 import mlx90614
 import machine
 import math
+import sys
 
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
