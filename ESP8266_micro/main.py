@@ -8,6 +8,7 @@ import mlx90614
 import machine
 import math
 import sys
+import gc
 
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
@@ -179,6 +180,8 @@ if __name__ == '__main__':
         print(mensaje2[1])
     time.sleep(1)
     player.play_by_index(10)
+    collected = gc.collect()
+    print(collected)
     while True:
         print("hola")
         codigo_de_barras()
@@ -247,6 +250,8 @@ if __name__ == '__main__':
                     else:
                         player.play_by_index(14) #fallido
         persona.clear()
+        collected = gc.collect()
+        print(collected) 
         print(persona)
         while uart.any() is not 0:
             uart.read(1)
