@@ -184,7 +184,7 @@ if __name__ == '__main__':
     player.play_by_index(10)
     collected = gc.collect()
     print(collected)
-    wdt = WDT(timeout=30000)
+    wdt = WDT(timeout=90000)
     while True:
         print("hola")
         codigo_de_barras()
@@ -221,7 +221,7 @@ if __name__ == '__main__':
                 machine.reset()
             #tem = 1.4424*x-0.0154*x**2+2.2569
             tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
-            if tem < 25 and tem > 42:
+            if tem < 29 or tem > 42:
                 player.play_by_index(14)
             else:
                 contador = 0
