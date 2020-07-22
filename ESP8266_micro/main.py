@@ -9,6 +9,7 @@ import machine
 import math
 import sys
 import gc
+from machine import WDT
 
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
@@ -108,10 +109,10 @@ def pregun():
             time.sleep(1)
 
 def codigo_de_barras():
-    global codigo , sr
+    global codigo , sr , wdt
     while True:
         while uart.any() is 0:
-            pass
+            wdt.feed()
         data = uart.read(1)
         if data==b"\r":
             codigo=sr.decode("utf-8")[0:len(sr)-3]
@@ -182,6 +183,7 @@ if __name__ == '__main__':
     player.play_by_index(10)
     collected = gc.collect()
     print(collected)
+    wdt = WDT(timeout=30000)
     while True:
         print("hola")
         codigo_de_barras()
@@ -234,7 +236,7 @@ if __name__ == '__main__':
                 if pregun() is 0:
                     if persona["Res1"] is 1 or persona["Res2"] is 1 or tem >= 38:
                         player.play_by_index(20)
-                        time.sleep(1)
+                        time.sleep(3)
                         player.play_by_index(21)
                         time.sleep(3)
                     try:
@@ -250,8 +252,6 @@ if __name__ == '__main__':
                     else:
                         player.play_by_index(14) #fallido
         persona.clear()
-        collected = gc.collect()
-        print(collected) 
         print(persona)
         while uart.any() is not 0:
             uart.read(1)
