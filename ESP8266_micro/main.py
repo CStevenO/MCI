@@ -20,8 +20,8 @@ rtc = RTC()
 
 
 def Conexion_MQTT():
-    client_id = b"Covid_" + ubinascii.hexlify(unique_id())
-    #client_id = b"covid"
+    #client_id = b"Covid_" + ubinascii.hexlify(unique_id())
+    client_id = b"Covid_1"
     mqtt_server = '10.50.1.153'
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
