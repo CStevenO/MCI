@@ -159,18 +159,19 @@ if __name__ == '__main__':
         i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
         sensor = mlx90614.MLX90614(i2c)
     except:
-        print("conectando...")
+        print("conectando sensor...")
         sensor = mlx90614.MLX90614(i2c)
     try:
+        print("conectando MQTT...")
         client = Conexion_MQTT()
-    except OSError as e:
-        Reinciar_conexion()
     except:
+        print("No MQTT")
         Reinciar_conexion()
     try:
         disp_pub = client.check_msg()
         client.publish(b'ING_DATOS', b'00,16523')
-    except OSError as e:
+    except:
+        print("No Mensaje")
         Reinciar_conexion()
     client.wait_msg()
     try:
@@ -195,7 +196,8 @@ if __name__ == '__main__':
             disp_pub = client.check_msg()
             client.publish(b'ING_DATOS', codigo.encode())
             time.sleep(.1)
-        except OSError as e:
+        except:
+            print("No Mensaje")
             Reinciar_conexion()
         client.wait_msg()
         mensaje2 = mensaje.replace(";","").split(",")
@@ -219,7 +221,7 @@ if __name__ == '__main__':
                 machine.reset()
             #tem = 1.4424*x-0.0154*x**2+2.2569
             tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
-            if tem < 25:
+            if tem < 25 and tem > 42:
                 player.play_by_index(14)
             else:
                 contador = 0
@@ -243,7 +245,8 @@ if __name__ == '__main__':
                         disp_pub = client.check_msg()
                         client.publish(b'ING_DATOS', trama.encode())
                         time.sleep(.1)
-                    except OSError as e:
+                    except:
+                        print("No Mensaje")
                         Reinciar_conexion()
                     client.wait_msg()
                     print(mensaje)
