@@ -1,5 +1,5 @@
 from jq6500 import Player
-from machine import I2C, Pin, UART, unique_id
+from machine import I2C, Pin, UART, unique_id, Timer, WDT
 from mqtt import MQTTClient
 import micropython
 import time
@@ -7,9 +7,6 @@ import ubinascii
 import mlx90614
 import machine
 import math
-import sys
-import gc
-from machine import WDT
 
 player = Player(port=1, volume=30)
 uart = UART(2, 115200)
@@ -20,15 +17,15 @@ rtc = RTC()
 
 
 def Conexion_MQTT():
-    #client_id = b"Covid_" + ubinascii.hexlify(unique_id())
-    client_id = b"Covid_1"
+    client_id = b"Covid_1" + ubinascii.hexlify(machine.unique_id())
+    #client_id = b"Covid_1"
     mqtt_server = '10.50.1.153'
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
     pswd_mqtt = None #Si su servidor no necesita contraseña escribe None sin comillas
     client = MQTTClient(client_id, mqtt_server,port_mqtt,user_mqtt,pswd_mqtt)
     client.set_callback(form_sub)
-    client.connect()
+    client.connect(True)
     client.subscribe(b'HORA')
     client.subscribe(b'SAL_DA')
     print('Conectado a %s' % mqtt_server)
@@ -111,8 +108,31 @@ def pregun():
 def codigo_de_barras():
     global codigo , sr , wdt
     while True:
+        start = time.ticks_ms()
         while uart.any() is 0:
             wdt.feed()
+            delta = time.ticks_diff(time.ticks_ms(), start)
+            if delta >= 10000:
+                kpalive()
+                start = time.ticks_ms()
+        data = uart.read(1)
+        if data==b"\r":
+            codigo=sr.decode("utf-8")[0:len(sr)-3]
+            sr=b""
+            break
+        elif data is not None:
+            sr=sr+data
+
+def codigo_de_barras1():
+    global codigo , sr , wdt
+    while True:
+        start = time.ticks_ms()
+        while uart.any() is 0:
+            wdt.feed()
+            delta = time.ticks_diff(time.ticks_ms(), start)
+            if delta >= 10000:
+                #kpalive()
+                start = time.ticks_ms()
         data = uart.read(1)
         if data==b"\r":
             codigo=sr.decode("utf-8")[0:len(sr)-3]
@@ -131,6 +151,16 @@ def form_sub(topic, msg):
     elif topic.decode() is "SAL_DA":
         espera = True
         print(mensaje)
+
+def kpalive():
+    global client
+    try:
+        disp_pub = client.check_msg()
+        client.publish(b'ING_DATOS', b"05,Hola;")
+        time.sleep(.1)
+    except:
+        print("Conexión Perdida")
+        Reinciar_conexion()
 
 ressi = Pin(27, Pin.IN, Pin.PULL_UP)
 resno = Pin(26, Pin.IN, Pin.PULL_UP)
@@ -155,6 +185,12 @@ contador = 0
 if __name__ == '__main__':
     mensaje2 = ["","",""]
     load_config()
+    wdt = WDT(timeout=90000)
+    if uart.any() is not 0:
+        codigo_de_barras1()
+        if codigo=="16523" or codigo=="17971":
+            if pregun() == 1:
+                sys.exit()
     try:
         i2c = I2C(scl=Pin(22), sda=Pin(21),freq=50000)
         sensor = mlx90614.MLX90614(i2c)
@@ -182,13 +218,11 @@ if __name__ == '__main__':
         print(mensaje2[1])
     time.sleep(1)
     player.play_by_index(10)
-    collected = gc.collect()
-    print(collected)
-    wdt = WDT(timeout=90000)
+    #wdt = WDT(timeout=90000)
     while True:
         print("hola")
         codigo_de_barras()
-        if codigo=="16523":
+        if codigo=="16523" or codigo=="17971":
             if pregun() == 1:
                 sys.exit()
         codigo = "00," + codigo + ";"
@@ -221,6 +255,16 @@ if __name__ == '__main__':
                 machine.reset()
             #tem = 1.4424*x-0.0154*x**2+2.2569
             tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
+            """
+            crudo = "05," + x + "+" + tem + ";"
+            try:
+                disp_pub = client.check_msg()
+                client.publish(b'ING_DATOS', crudo.encode())
+                time.sleep(.1)
+            except:
+                print("No Mensaje")
+                Reinciar_conexion()
+            """
             if tem < 29 or tem > 42:
                 player.play_by_index(14)
             else:
