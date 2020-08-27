@@ -1,6 +1,6 @@
 # Complete project details at https://RandomNerdTutorials.com
 #import webrepl_setup
-import time
+
 def do_connect():
     import network
     wlan = network.WLAN(network.STA_IF)
@@ -26,6 +26,5 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 do_connect()
-#import webrepl
-#webrepl.start()
-#time.sleep(3)
+import webrepl
+webrepl.start()

@@ -1,73 +1,98 @@
-#Librerias
+from machine import I2C, Pin, UART, unique_id, Timer, WDT
+from mqtt import MQTTClient
+import micropython
 import time
 import ubinascii
 import machine
-from mqtt import MQTTClient
-from machine import unique_id,Pin
-import micropython
-import network
 
-#Cada que hay algo nuevo en las suscribciones las muestra aquí
-#Nota: decode() y b'' se utiliza para poder convertir un string a byte y vice versa
-def form_sub(topic, msg):
-    global mensaje, espera, rtc
-    mensaje = msg.decode()
-    if topic.decode() is "HORA":
-        dat = mensaje.replace(";","").split(",")
-        rtc.datetime((dat[0],dat[1],dat[2],0,dat[3],dat[4],dat[5]))
-        print(rtc.datetime())
-    elif topic.decode() is "SAL_DA":
-        espera = True
 
-#Función que conecta y se suscribe a MQTT
 def Conexion_MQTT():
-    #client_id = b"Covid_" + ubinascii.hexlify(unique_id())
-    client_id = b"covid"
+    #client_id = b"Covid" + ubinascii.hexlify(machine.unique_id())
+    client_id = b"prueba"
     mqtt_server = '10.50.1.153'
+    #mqtt_server = 'mantenimiento.elite.local'
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
     pswd_mqtt = None #Si su servidor no necesita contraseña escribe None sin comillas
     client = MQTTClient(client_id, mqtt_server,port_mqtt,user_mqtt,pswd_mqtt)
     client.set_callback(form_sub)
-    client.connect()
+    client.connect(True)
     client.subscribe(b'SAL_DA')
-    client.subscribe(b'HORA')
     print('Conectado a %s' % mqtt_server)
+    client.set_last_will(b'SAL_DA',b'Desconexión Inesperada')
     return client
 
-#Reinicia la conexión de MQTT
 def Reinciar_conexion():
     print('Fallo en la conexion. Intentando de nuevo...')
-    time.sleep(10)
+    time.sleep(3)
     machine.reset()
 
-#Se coloca la conexión dentro de un Try por si hay errores en la misma
-try:
-    client = Conexion_MQTT()
-except OSError as e:
-    Reinciar_conexion()
-except:
-    Reinciar_conexion()
+
+def load_config():
+    import ujson as json
+    try:
+        with open("/config.json") as f:
+            config = json.loads(f.read())
+    except (OSError, ValueError):
+        print("Couldn't load /config.json")
+        save_config()
+    else:
+        CONFIG.update(config)
+        print("Loaded config from /config.json")
+
+def save_config():
+    import ujson as json
+    try:
+        with open("/config.json", "w") as f:
+            f.write(json.dumps(CONFIG))
+    except OSError:
+        print("Couldn't save /config.json")
+
+def form_sub(topic, msg):
+    global mensaje, espera
+    mensaje = msg.decode()
+    if topic.decode() is "HORA":
+        dat = mensaje.replace(";","").split(",")
+        rtc.datetime((dat[1],dat[2],dat[3],0,dat[4],dat[5],dat[6]))
+        print(rtc.datetime())
+    elif topic.decode() is "SAL_DA":
+        espera = True
+        print(mensaje)
+
+def kpalive():
+    global client
+    try:
+        disp_pub = client.check_msg()
+        client.publish(b'ING_DATOS', b"05,Hola;")
+        time.sleep(.1)
+    except:
+        print("Conexión Perdida")
+        Reinciar_conexion()
+
 sr=b""
 mensaje = ""
 espera = False
 codigo = ""
-
-#Bucle
-
+contador = 0
+try:
+    time.sleep(.5)
+    print("conectando MQTT...")
+    client = Conexion_MQTT()
+except:
+    print("No MQTT")
+    Reinciar_conexion()
+try:
+    disp_pub = client.check_msg()
+    client.publish(b'ING_DATOS', b'00,16523')
+except:
+    print("No Mensaje")
+    Reinciar_conexion()
+client.wait_msg()
+try:
+    print(mensaje2[1])
+except:
+    time.sleep(2)
+    mensaje2 = mensaje.replace(";","").split(",")
+    print(mensaje2[1])
 if __name__ == '__main__':
     mensaje2 = ["","",""]
-    while True:
-        try:
-            disp_pub = client.check_msg()
-            client.publish(b'ING_DATOS', b'00,16523;')
-        except OSError as e:
-            Reinciar_conexion()
-        time.sleep(1)
-        mensaje2 = mensaje.replace(";","").split(",")
-        try:
-            print(mensaje2[1])
-        except:
-            time.sleep(2)
-            mensaje2 = mensaje.replace(";","").split(",")
-            print(mensaje2[1])
