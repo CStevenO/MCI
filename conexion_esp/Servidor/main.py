@@ -5,25 +5,26 @@ import time
 import ubinascii
 import machine
 import math
+import boot
 
-uart = UART(2, 115200)
+uart = UART(0, 115200)
 
 
-from machine import RTC
-rtc = RTC()
+#from machine import RTC
+#rtc = RTC()
 
 
 def Conexion_MQTT():
     #client_id = b"Covid_1" + ubinascii.hexlify(machine.unique_id())
-    client_id = b""
-    mqtt_server = '10.50.1.153'
+    client_id = CONFIG["client_id"]
+    mqtt_server = CONFIG["broker"]
     port_mqtt = 1883
     user_mqtt = None #Si su servidor no necesita usuario escribe None sin comillas
     pswd_mqtt = None #Si su servidor no necesita contraseña escribe None sin comillas
     client = MQTTClient(client_id, mqtt_server,port_mqtt,user_mqtt,pswd_mqtt)
     client.set_callback(form_sub)
     client.connect(True)
-    client.subscribe(b'SAL_DA')
+    client.subscribe(CONFIG["subscribe"])
     print('Conectado a %s' % mqtt_server)
     return client
 
@@ -75,138 +76,91 @@ def codigo_de_barras():
 def form_sub(topic, msg):
     global mensaje, espera
     mensaje = msg.decode()
-    if topic.decode() is "HORA":
-        dat = mensaje.replace(";","").split(",")
-        rtc.datetime((dat[1],dat[2],dat[3],0,dat[4],dat[5],dat[6]))
-        print(rtc.datetime())
-    elif topic.decode() is "SAL_DA":
+    if topic.decode() is CONFIG["subscribe"]:
         espera = True
-        print(mensaje)
 
 def kpalive():
     global client
     try:
         disp_pub = client.check_msg()
-        client.publish(b'ING_DATOS', b"05,Hola;")
+        client.publish(CONFIG["publish"], b"KP,Hola;")
         time.sleep(.1)
     except:
         print("Conexión Perdida")
         Reinciar_conexion()
 
+def ip_sol():
+    global client
+    web_so = "IPWEB," + CONFIG["client_id"] + "," + wlan.ifconfig()[0] + ";"
+    try:
+        disp_pub = client.check_msg()
+        client.publish(CONFIG["publish"], web_so.encode())
+    except:
+        print("No Mensaje")
+        Reinciar_conexion()
+
+def uart_lectura():
+    global read_text
+    read_text = read_text + uart.read(uart.any())
+
+def intentos():
+    global read_text,index_final
+    if uart.any() is not 0:
+        uart_lectura()
+    try:
+        index_final = read_text.index(";")
+        transmi()
+    except:
+        intentos()
+
 CONFIG = {
-    "broker": "mantenimiento.elite.local",
-    "client_id": b"esp8266_" + ubinascii.hexlify(machine.unique_id()),
-    "topic": b"ING_DATOS",
-    "sub_topic": b"SAL_DA",
-    "finca": 01, #id_finca
-    "equipo": 01, #id_equipo
-    "A": -0.0154,
-    "B": 1.4424,
-    "C": 2.2569,
+    "broker": '10.50.1.153',
+    "client_id": b'SP30',
+    "subscribe": b'MCI_ST_OUT',
+    "publish": b'MCI_SP_IN'
 }
 sr=b""
 mensaje = ""
 espera = False
 codigo = ""
 contador = 0
+read_text = ""
 if __name__ == '__main__':
     mensaje2 = ["","",""]
+    mensaje_re = ["","",""]
     load_config()
-    wdt = WDT(timeout=90000)
+    #wdt = WDT(timeout=90000)
     try:
         print("conectando MQTT...")
         client = Conexion_MQTT()
     except:
         print("No MQTT")
         Reinciar_conexion()
-    try:
-        disp_pub = client.check_msg()
-        client.publish(b'ING_DATOS', b'00,16523')
-    except:
-        print("No Mensaje")
-        Reinciar_conexion()
-    client.wait_msg()
-    try:
-        print(mensaje2[1])
-    except:
-        time.sleep(2)
-        mensaje2 = mensaje.replace(";","").split(",")
-        print(mensaje2[1])
+    ip_sol()
     time.sleep(1)
-    #wdt = WDT(timeout=90000)
     while True:
-        print("hola")
-        codigo_de_barras()
-        if codigo=="16523" or codigo=="17971":
-            if pregun() == 1:
-                sys.exit()
-        codigo = "00," + codigo + ";"
-        try:
-            disp_pub = client.check_msg()
-            client.publish(b'ING_DATOS', codigo.encode())
-            time.sleep(.1)
-        except:
-            print("No Mensaje")
-            Reinciar_conexion()
-        client.wait_msg()
-        mensaje2 = mensaje.replace(";","").split(",")
-        if mensaje2 == "NO":
-            pass
-        else:
-            persona = {
-              "codigo": codigo, #toca agregarle el codigo que ingresa de la respuesta
-              "cedula": mensaje2[2], #toca agregarle la cedula que ingresa de la respuesta
-              "Nombre": mensaje2[1],
-              "tipo": 01, #toca revisar como se hace eso
-              "finca": CONFIG['finca'], #mirar id finca
-              "equipo": CONFIG['equipo'], #mirar equipo
-            }
-            x = read_tem()
-            if x == 0:
-                contador = contador + 1
-            if contador >= 2:
-                machine.reset()
-            #tem = 1.4424*x-0.0154*x**2+2.2569
-            tem = 0.0000583*x**4-0.0081*x**3+0.3929*x**2-7.3155*x+68.59
-            """
-            crudo = "05," + x + "+" + tem + ";"
+        if client.check_msg():
+            client.wait_msg()
+        if espera:
+            espera = False
+            mensaje2 = mensaje.replace(";","").split(",")
+            if mensaje2[0] == "IPWEB":
+                ip_sol()
+            elif mensaje[0] == "RED":
+                pass
+            elif mensaje2[0] == "CONF_INVER":
+                pass
+            elif mensaje2[0] == "HORA":
+                pass
+            else:
+                pass
+        if uart.any() is not 0:
+            read_text = uart.read(uart.any())
+            intentos()
             try:
                 disp_pub = client.check_msg()
-                client.publish(b'ING_DATOS', crudo.encode())
-                time.sleep(.1)
+                client.publish(CONFIG["publish"], read_text.encode())
             except:
                 print("No Mensaje")
                 Reinciar_conexion()
-            """
-            if tem < 29 or tem > 42:
-                pass
-            else:
-                contador = 0
-                persona.update({"temperatura": tem})
-                time.sleep(1)
-                persona.update({"Res1": pregun()})
-                persona.update({"Res2": pregun()})
-                persona.update({"ingreso": '{}-{}-{} {}:{}:{}'.format(rtc.datetime()[0],rtc.datetime()[1],rtc.datetime()[2],rtc.datetime()[4],rtc.datetime()[5],rtc.datetime()[6])})
-                trama = '{},{},{},{},{},{},{},{},{},{};'.format(02,persona["codigo"],persona["cedula"],persona["tipo"],persona["temperatura"],persona["Res1"],persona["Res2"],persona["finca"],persona["equipo"],persona["ingreso"])
-                print(trama)
-                if pregun() is 0:
-                    if persona["Res1"] is 1 or persona["Res2"] is 1 or tem >= 38:
-                        time.sleep(3)
-                        time.sleep(3)
-                    try:
-                        disp_pub = client.check_msg()
-                        client.publish(b'ING_DATOS', trama.encode())
-                        time.sleep(.1)
-                    except:
-                        print("No Mensaje")
-                        Reinciar_conexion()
-                    client.wait_msg()
-                    print(mensaje)
-                    if mensaje is "Exitoso":
-                        pass
-                    else:
-                        pass
-        persona.clear()
-        print(persona)
-        while uart.any() is not 0:
-            uart.read(1)
+            #enviar informacion a mqtt

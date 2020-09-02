@@ -1,13 +1,15 @@
 # Complete project details at https://RandomNerdTutorials.com
 #import webrepl_setup
+
 import time
 def do_connect():
     import network
+    global wlan
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'MTTO '
+    ssid = 'Prueba Elite'
     ssidb = str.encode(ssid)
-    password = 'Mtto2020.'
+    password = 'pastmtto123'
     pos = -1
     if not wlan.isconnected():
         while pos == -1:
