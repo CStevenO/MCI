@@ -15,8 +15,6 @@ void loop() {
     Serial.print(".");
     mensajeEntrada = esp.readStringUntil(';');
     Serial.println(mensajeEntrada);
-    mensajeEntrada = mensajeEntrada.substring(3);
-    esp.println(mensajeEntrada+ ";" );
   }
   delay(500);
 }

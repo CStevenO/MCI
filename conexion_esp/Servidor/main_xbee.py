@@ -6,6 +6,13 @@ import time
 # TARGET_64BIT_ADDR = b'\x00\x13\xA2\xFF\x00\x00\x00\x5D'
 MESSAGE = "hola a todos;"
 
+def buscar(read_text):
+    sr=b''
+    while sr.decode() is not ';':
+        sr = stdin.buffer.read(1)
+        read_text = read_text + sr
+    return read_text
+
 while True:
     # Check if the XBee has any message in the queue.
     received_msg = xbee.receive()
@@ -15,17 +22,12 @@ while True:
         payload = received_msg['payload']
         stdout.buffer.write(payload)
     time.sleep_ms(50)
-    read_text = stdin.read(-1)
-    if read_text:
-        read2 = stdin.read(-1)
-        while read2 is not None:
-            read_text = read_text + read2
-            read2 = stdin.read(-1)
+    read_text = stdin.buffer.read()
+    if read_text is not None:
         try:
-            index = read_text.index("\n")
-            read_text = read_text[0:index]
-        except Exception as e:
-            pass
+            index_final = read_text.decode().index(";")
+        except:
+            read_text = buscar(read_text)
         try:
             xbee.transmit(xbee.ADDR_COORDINATOR, read_text)
         except Exception as e:

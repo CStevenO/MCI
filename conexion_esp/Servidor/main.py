@@ -6,8 +6,12 @@ import ubinascii
 import machine
 import math
 import boot
+import uos
 
-uart = UART(0, 115200)
+uos.dupterm(None, 1)
+uart = UART(0, baudrate=9600, bits=8, parity=None, stop=1, rxbuf=50, timeout=0, timeout_char=2)
+#UART(0, baudrate=9600, bits=8, parity=None, stop=1, rxbuf=15, timeout=0, timeout_char=2)
+
 
 
 #from machine import RTC
@@ -54,19 +58,12 @@ def save_config():
         print("Couldn't save /config.json")
 
 
-def codigo_de_barras():
-    global codigo , sr , wdt
+def uart_lectura():
+    global read_text, sr
     while True:
-        start = time.ticks_ms()
-        while uart.any() is 0:
-            wdt.feed()
-            delta = time.ticks_diff(time.ticks_ms(), start)
-            if delta >= 10000:
-                kpalive()
-                start = time.ticks_ms()
         data = uart.read(1)
-        if data==b"\r":
-            codigo=sr.decode("utf-8")[0:len(sr)-3]
+        if data==b";":
+            read_text=sr.decode()
             sr=b""
             break
         elif data is not None:
@@ -99,32 +96,19 @@ def ip_sol():
         print("No Mensaje")
         Reinciar_conexion()
 
-def uart_lectura():
-    global read_text
-    read_text = read_text + uart.read(uart.any())
-
-def intentos():
-    global read_text,index_final
-    if uart.any() is not 0:
-        uart_lectura()
-    try:
-        index_final = read_text.index(";")
-        transmi()
-    except:
-        intentos()
-
 CONFIG = {
     "broker": '10.50.1.153',
     "client_id": b'SP30',
     "subscribe": b'MCI_ST_OUT',
     "publish": b'MCI_SP_IN'
 }
-sr=b""
+sr=b''
 mensaje = ""
 espera = False
-codigo = ""
 contador = 0
 read_text = ""
+while uart.any() is not 0:
+    uart.read(1)
 if __name__ == '__main__':
     mensaje2 = ["","",""]
     mensaje_re = ["","",""]
@@ -143,24 +127,25 @@ if __name__ == '__main__':
             client.wait_msg()
         if espera:
             espera = False
-            mensaje2 = mensaje.replace(";","").split(",")
+            mensaje2 = mensaje.split(",")
             if mensaje2[0] == "IPWEB":
                 ip_sol()
-            elif mensaje[0] == "RED":
-                pass
+            elif mensaje2[0] == "RED":
+                uart.write(mensaje)
+                print("red")
             elif mensaje2[0] == "CONF_INVER":
-                pass
+                uart.write(mensaje)
+                print("conf")
             elif mensaje2[0] == "HORA":
-                pass
+                uart.write(mensaje)
+                print("hora")
             else:
-                pass
+                print("otros")
         if uart.any() is not 0:
-            read_text = uart.read(uart.any())
-            intentos()
+            uart_lectura()
             try:
                 disp_pub = client.check_msg()
                 client.publish(CONFIG["publish"], read_text.encode())
             except:
                 print("No Mensaje")
                 Reinciar_conexion()
-            #enviar informacion a mqtt

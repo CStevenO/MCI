@@ -23,49 +23,40 @@ def transmision(bl,msj):
                 descubrir_red()
                 transmision(bl,msj)
 
-
-def uart_lectura():
-    global read2,read_text,index
-    read2 = stdin.read(-1)
-    while read2 is not None:
-        read_text = read_text + read2
-        read2 = stdin.read(-1)
-    try:
-        index = read_text.index("\n")
-        read_text = read_text[0:index]
-    except Exception as e:
-        pass
-
-def intentos():
-    global read_text,index_final
-    uart_lectura()
-    try:
-        index_final = read_text.index(";")
-        transmi()
-    except:
-        intentos()
-
 def descubrir_red():
     global dispositivos
     for device in xbee.discover():
         dis = {
+            "name": device["node_id"],
             "addr": device["sender_eui64"],
             "rssi": device["rssi"]
         }
         dispositivos[device["node_id"]] = dis
 
 def transmi():
-    global read_text,mensaje2, dispositivos
-    mensaje2 = read_text.split(",")
+    global read_text,mensaje2, dispositivos,trama_red
+    mensaje2 = read_text.decode().split(",")
     if mensaje2[0] is "RED":
         # Discover the network devices and print their basic information.
         descubrir_red()
-        print(dispositivos)
+        trama_red = "RED," + str(len(dispositivos))
+        for x in dispositivos:
+            trama_red = trama_red + "," + dispositivos[x]["name"] + "," + str(dispositivos[x]["rssi"])
+        trama_red = trama_red + ";"
+        stdout.buffer.write(trama_red)
     elif mensaje2[0] is "HORA":
         transmision("0",read_text)
     elif mensaje2[0] is "CONF_INVER":
         transmision(mensaje2[1],read_text)
 
+def buscar(read_text):
+    sr=b''
+    while sr.decode() is not ';':
+        sr = stdin.buffer.read(1)
+        read_text = read_text + sr
+    return read_text
+
+trama_red = None
 descubrir_red()
 while True:
     # Check if the XBee has any message in the queue.
@@ -76,7 +67,12 @@ while True:
         payload = received_msg['payload']
         stdout.buffer.write(payload)
     time.sleep_ms(50)
-    read_text = stdin.read(-1)
-    if read_text:
-        intentos()
+    read_text = stdin.buffer.read()
+    if read_text is not None:
+        try:
+            index_final = read_text.decode().index(";")
+            transmi()
+        except:
+            read_text=buscar(read_text)
+            transmi()
     time.sleep(0.1)
