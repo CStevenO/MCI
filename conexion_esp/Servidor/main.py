@@ -143,9 +143,12 @@ if __name__ == '__main__':
                 print("otros")
         if uart.any() is not 0:
             uart_lectura()
-            try:
-                disp_pub = client.check_msg()
-                client.publish(CONFIG["publish"], read_text.encode())
-            except:
-                print("No Mensaje")
-                Reinciar_conexion()
+            if (read_text.split(","))[0] is "ACT":
+                pass
+            else:
+                try:
+                    disp_pub = client.check_msg()
+                    client.publish(CONFIG["publish"], read_text.encode())
+                except:
+                    print("No Mensaje")
+                    Reinciar_conexion()

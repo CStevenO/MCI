@@ -4,6 +4,7 @@ void setup()
   wdt_disable();
   #include "Conf.h"
   wdt_enable(WDTO_8S);
+  esp.print("ACT,DATOS;");
 }
 
 void loop() 

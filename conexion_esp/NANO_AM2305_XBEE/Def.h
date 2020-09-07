@@ -32,16 +32,25 @@ long fecha = 0;
 #include <AltSoftSerial.h>
 AltSoftSerial esp;
 
+//RELES
+#include "Adafruit_MCP23017.h"
+Adafruit_MCP23017 mcp;
+#define disOut 7 // RELÉ 4
+#define ducOut 6 // RELÉ 3
+#define subOut 5 // RELÉ 2
+#define venOut 4 // RELÉ 1
+mcp.pinMode(7, OUTPUT);
+mcp.pinMode(6, OUTPUT);
+mcp.pinMode(5, OUTPUT);
+mcp.pinMode(4, OUTPUT);
+
 //MESH
 #define intervalo 5
 String mensajeSalida = "";
 String mensajeEntrada = "";
+String* mensaEntrada;
 byte idMensaje = 0;
 byte indice = 0;
-bool unicaVez = false;
-bool unicaVez1 = false;
-bool unicaVez2 = false;
-bool unicaVez3 = false;
 int datos[6];
 int idInvernadero=1783;
 #define separador ','

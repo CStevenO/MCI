@@ -10,105 +10,83 @@ void tiempoActual()
   fecha = now.unixtime();
 }
 
+String* separacion(String Msj)
+{
+  String Msj2="";
+  int contador = 0;
+  int fin = Msj.indexOf(",");
+  while(fin != -1){
+    contador++;
+    Msj2 = Msj2 + Msj.substring(0,fin)+ ",";
+    Msj = Msj.substring(fin+1);
+    fin = Msj.indexOf(",");
+  }
+  Msj2 = Msj2 + Msj;
+  String* mensa = new String[contador+1];
+  fin = Msj2.indexOf(",");
+  for(int i=0;i<contador;i++){
+    mensa[i] = Msj2.substring(0,fin);
+    Msj2 = Msj2.substring(fin+1);
+    fin = Msj2.indexOf(",");
+    if(contador==i+1){
+      mensa[i+1]=Msj2;
+    }
+  }
+  return mensa;
+}
+
 void enviarDatos() {
- 
   if (esp.available()>0) 
   {
     mensajeEntrada = esp.readStringUntil(';');
-    idMensaje = mensajeEntrada.substring(1).toInt();
-     
-    switch(idMensaje)
-    {
-    case 0:
-              
-   
-                         
-    break;
-    
-    case 3:
-    
-      mensajeEntrada = mensajeEntrada.substring(3);
-      for (i = 0; i < 6 ; i++)
-      {
-        indice = mensajeEntrada.indexOf(separador);
-        datos[i] = (mensajeEntrada.substring(0, indice)).toInt();
-        mensajeEntrada = mensajeEntrada.substring(indice + 1);
+    mensaEntrada=separacion(mensajeEntrada);
+    if(*(mensaEntrada)=="CONF_INVER"){
+      if(*(mensaEntrada+2)=="ON"){
+        mcp.digitalWrite(venOut, HIGH);
       }
-      RTC.adjust(DateTime(datos[0], datos[1], datos[2], datos[3], datos[4], datos[5]));
-    
-    case 4:
-        //enciende efectores
-
-    break;
+      else{
+        mcp.digitalWrite(venOut, LOW);
+      }
+      if(*(mensaEntrada+3)=="ON"){
+        mcp.digitalWrite(subOut, HIGH);
+      }
+      else{
+        mcp.digitalWrite(subOut, LOW);
+      }
+      if(*(mensaEntrada+4)=="ON"){
+        mcp.digitalWrite(ducOut, HIGH);
+      }
+      else{
+        mcp.digitalWrite(ducOut, LOW);
+      }
+      if(*(mensaEntrada+5)=="ON"){
+        mcp.digitalWrite(disOut, HIGH);
+      }
+      else{
+        mcp.digitalWrite(disOut, LOW);
+      }
     }
-      
+    else if(*(mensaEntrada)=="HORA"){
+      RTC.adjust(DateTime(String(*(mensaEntrada+1)).toInt(),String(*(mensaEntrada+2)).toInt(),String(*(mensaEntrada+3)).toInt(),String(*(mensaEntrada+4)).toInt(),String(*(mensaEntrada+5)).toInt(),String(*(mensaEntrada+6)).toInt()));
+    }
    }
-
-
- if (minuto % intervalo == 0 && !unicaVez && segundo==0 && h <= 100 && t <= 100 ) 
-
-  {
-    mensajeSalida.reserve(40);
-    mensajeSalida = "01," + String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + "0" + "," + idInvernadero + "," + String(t, 2) + "," + String(h, 2) + ";";
-//    mensajeSalida = "01," + String(fecha) + "," + idInvernadero + "," + String(t, 2) + "," + String(h, 2) + ";";
-
+   if (minuto % intervalo == 0 && segundo==0) {
+    mensajeSalida = "DATO_INV," + String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + "0" + "," + idInvernadero + "," + String(t, 2) + "," + String(h, 2) + ";";
     lcd.clear();
-    unicaVez = true;
     esp.print(mensajeSalida);
     lcd.setCursor(9, 1);
     lcd.print("E"); 
-  }
-
-  if (minuto % intervalo == 0 && !unicaVez1 && segundo==10 && h <= 100 && t <= 100 )
-  {
-    unicaVez1 = true;
-    esp.print(mensajeSalida);
-    lcd.setCursor(9, 1);
-    lcd.print("E"); 
-  }
-
-   if (minuto % intervalo == 0 && !unicaVez2 &&segundo==30 && h <= 100 && t <= 100)
-  {
-    unicaVez2 = true;
-    esp.print(mensajeSalida);
-    lcd.setCursor(9, 1);
-    lcd.print("E"); 
-  }
-
-  if (minuto % intervalo == 0 && !unicaVez3 &&segundo==50 && h <= 100 && t <= 100)
-  {
-    unicaVez3 = true;
-    esp.print(mensajeSalida);
-    lcd.setCursor(9, 1);
-    lcd.print("E"); 
-  }
-    
-  if (minuto % intervalo != 0) 
-  {
-    unicaVez = false;
-    unicaVez1 = false;
-    unicaVez2 = false;
-    unicaVez3 = false;
-  }
-
-  if(hora== 4 && minuto == 52 && segundo == 20)
-  {
-     asm("jmp 0x0000");
-  }
-
-   if(hora== 11 && minuto == 52 && segundo == 20)
-  {
-     asm("jmp 0x0000");
-  }
-
-   if(hora== 16 && minuto == 52 && segundo == 20)
-  {
-     asm("jmp 0x0000");
-  }
-
-  if(hora==23 && minuto == 52 && segundo == 20)
-  {
-     asm("jmp 0x0000");
-  }
-
+    }
+    if(hora== 4 && minuto == 52 && segundo == 20){
+      asm("jmp 0x0000");
+    }
+    if(hora== 11 && minuto == 52 && segundo == 20){
+      asm("jmp 0x0000");
+    }
+    if(hora== 16 && minuto == 52 && segundo == 20){
+      asm("jmp 0x0000");
+    }
+    if(hora==23 && minuto == 52 && segundo == 20){
+      asm("jmp 0x0000");
+    }
 }
