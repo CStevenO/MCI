@@ -146,7 +146,7 @@ try:
         if x > int(y):
             x=int(y)
     da = ALARM[str(x)].split(",")
-    com = int(da[3]) + int(da[4])/60
+    com = int(da[6]) + int(da[7])/60
 except:
     com=30
 sr=b''
@@ -181,16 +181,16 @@ if __name__ == '__main__':
             elif mensaje2[0] == "RED":
                 uart.write(mensaje)
             elif mensaje2[0] == "CONF":
-                for i in range(0,len(mensaje2)-1,6):
-                    ALARM[str(i)] = "CONF_INVER," + mensaje2[i+1] + "," + mensaje2[i+2] + "," + mensaje2[i+3] + "," + mensaje2[i+4] + "," + mensaje2[i+5]
-                    try:
-                        for y in ALARM:
-                            if x > int(y):
-                                x=int(y)
-                        da = ALARM[str(x)].split(",")
-                        com = int(da[3]) + int(da[4])/60
-                    except:
-                        com=30
+                for i in range(0,len(mensaje2)-1,9):
+                    ALARM[str(i)] = "CONF_INVER," + mensaje2[i+1] + "," + mensaje2[i+2] + "," + mensaje2[i+3] + "," + mensaje2[i+4] + "," + mensaje2[i+5] + "," + mensaje2[i+6] + "," + mensaje2[i+7] + "," + mensaje2[i+8]
+                try:
+                    for y in ALARM:
+                        if x > int(y):
+                            x=int(y)
+                    da = ALARM[str(x)].split(",")
+                    com = int(da[6]) + int(da[7])/60
+                except:
+                    com=30
             elif mensaje2[0] == "HORA":
                 uart.write(mensaje)
             else:
@@ -208,7 +208,8 @@ if __name__ == '__main__':
                     Reinciar_conexion()
         if comp_alarm:
             if not inh:
-                uart.write(ALARM[str(x)]+";")
+                sep = ALARM[str(x)].split(",")
+                uart.write(+";")
                 del ALARM[str(x)]
                 uos.remove("/alarm.json")
                 save_alarm()
@@ -217,7 +218,7 @@ if __name__ == '__main__':
             else:
                 try:
                     da = alarm[str(x)].split(",")
-                    com = int(da[3]) + int(da[4])/60
+                    com = int(da[6]) + int(da[7])/60
                 except:
                     com = 30
                 comp_alarm = False
