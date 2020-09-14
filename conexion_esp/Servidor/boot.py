@@ -6,7 +6,7 @@ def do_connect():
     global wlan
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'MTTO '
+    ssid = 'MTTO'
     ssidb = str.encode(ssid)
     password = 'Mtto2020.'
     pos = -1
