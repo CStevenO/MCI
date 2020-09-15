@@ -1,14 +1,12 @@
-# Complete project details at https://RandomNerdTutorials.com
 #import webrepl_setup
-
 def do_connect():
     import network
     global wlan
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'MTTO'
+    ssid = 'Red Wi-Fi de Elite Apple'
     ssidb = str.encode(ssid)
-    password = 'Mtto2020.'
+    password = 'Elite2019'
     pos = -1
     if not wlan.isconnected():
         while pos == -1:
@@ -27,5 +25,5 @@ def do_connect():
             pass
     print('network config:', wlan.ifconfig())
 do_connect()
-#import webrepl
-#webrepl.start()
+import webrepl
+webrepl.start()
