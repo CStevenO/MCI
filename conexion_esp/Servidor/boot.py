@@ -4,9 +4,9 @@ def do_connect():
     global wlan
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
-    ssid = 'Red Wi-Fi de Elite Apple'
+    ssid = 'MTOinvernadero'
     ssidb = str.encode(ssid)
-    password = 'Elite2019'
+    password = 'MTOinv2017'
     pos = -1
     if not wlan.isconnected():
         while pos == -1:

@@ -40,26 +40,28 @@ void enviarDatos() {
   {
     mensajeEntrada = esp.readStringUntil(';');
     mensaEntrada=separacion(mensajeEntrada);
+    Serial.println(mensajeEntrada);
     if(*(mensaEntrada)=="CONF_INVER"){
-      if(*(mensaEntrada+2)=="ON"){
+      Serial.println(mensajeEntrada);
+      if(*(mensaEntrada+2)=="OFF"){
         mcp.digitalWrite(venOut, HIGH);
       }
       else{
         mcp.digitalWrite(venOut, LOW);
       }
-      if(*(mensaEntrada+3)=="ON"){
+      if(*(mensaEntrada+3)=="OFF"){
         mcp.digitalWrite(subOut, HIGH);
       }
       else{
         mcp.digitalWrite(subOut, LOW);
       }
-      if(*(mensaEntrada+4)=="ON"){
+      if(*(mensaEntrada+4)=="OFF"){
         mcp.digitalWrite(ducOut, HIGH);
       }
       else{
         mcp.digitalWrite(ducOut, LOW);
       }
-      if(*(mensaEntrada+5)=="ON"){
+      if(*(mensaEntrada+5)=="OFF"){
         mcp.digitalWrite(disOut, HIGH);
       }
       else{
@@ -70,12 +72,16 @@ void enviarDatos() {
       RTC.adjust(DateTime(String(*(mensaEntrada+1)).toInt(),String(*(mensaEntrada+2)).toInt(),String(*(mensaEntrada+3)).toInt(),String(*(mensaEntrada+4)).toInt(),String(*(mensaEntrada+5)).toInt(),String(*(mensaEntrada+6)).toInt()));
     }
    }
-   if (minuto % intervalo == 0 && segundo==0) {
+   if (minuto % intervalo == 0 && segundo==0 && unica==false) {
     mensajeSalida = "DATO_INV," + String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + "0" + "," + idInvernadero + "," + String(t, 2) + "," + String(h, 2) + ";";
     lcd.clear();
+    unica=true;
     esp.print(mensajeSalida);
     lcd.setCursor(9, 1);
     lcd.print("E"); 
+    }
+    else if (unica && minuto % intervalo != 0 && segundo!=0){ 
+      unica=false;
     }
     if(hora== 4 && minuto == 52 && segundo == 20){
       asm("jmp 0x0000");

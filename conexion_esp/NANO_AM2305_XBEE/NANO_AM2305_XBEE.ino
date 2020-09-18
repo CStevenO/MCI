@@ -4,7 +4,8 @@ void setup()
   wdt_disable();
   #include "Conf.h"
   wdt_enable(WDTO_8S);
-  esp.print("ACT,DATOS;");
+  Serial.begin(9600);
+  esp.print("ACT,LV19;");
 }
 
 void loop() 

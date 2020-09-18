@@ -6,7 +6,7 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 //DHT
 unsigned long milisAnterior = 0;
 #include <DHT.h>
-#define DHTPIN 5    // PIN SENSOR
+#define DHTPIN 4    // PIN SENSOR
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 DHT dht(DHTPIN, DHTTYPE);
 float t;
@@ -39,10 +39,7 @@ Adafruit_MCP23017 mcp;
 #define ducOut 6 // RELÉ 3
 #define subOut 5 // RELÉ 2
 #define venOut 4 // RELÉ 1
-mcp.pinMode(7, OUTPUT);
-mcp.pinMode(6, OUTPUT);
-mcp.pinMode(5, OUTPUT);
-mcp.pinMode(4, OUTPUT);
+
 
 //MESH
 #define intervalo 5
@@ -55,6 +52,6 @@ int datos[6];
 int idInvernadero=1783;
 #define separador ','
 byte i = 0;
-
+bool unica=false;
 //WATCHDOG
 #include <avr/wdt.h>
