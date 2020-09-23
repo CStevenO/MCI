@@ -25,6 +25,7 @@ def transmision(bl,msj):
 
 def descubrir_red():
     global dispositivos
+    dispositivos.clear()
     for device in xbee.discover():
         dis = {
             "name": device["node_id"],

@@ -49,7 +49,7 @@ String* mensaEntrada;
 byte idMensaje = 0;
 byte indice = 0;
 int datos[6];
-int idInvernadero=1783;
+int idInvernadero=1871;
 #define separador ','
 byte i = 0;
 bool unica=false;

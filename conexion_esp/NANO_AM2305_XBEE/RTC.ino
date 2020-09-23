@@ -32,7 +32,9 @@ String* separacion(String Msj)
       mensa[i+1]=Msj2;
     }
   }
-  return mensa;
+  String* msgf=mensa;
+  delete[] mensa;
+  return msgf;
 }
 
 void enviarDatos() {
@@ -74,6 +76,7 @@ void enviarDatos() {
    }
    if (minuto % intervalo == 0 && segundo==0 && unica==false) {
     mensajeSalida = "DATO_INV," + String(anio) + "-" + String(mes) + "-" + String(dia) + " " + String(hora) + ":" + String(minuto) + ":" + "0" + "," + idInvernadero + "," + String(t, 2) + "," + String(h, 2) + ";";
+    Serial.println(mensajeSalida);
     lcd.clear();
     unica=true;
     esp.print(mensajeSalida);

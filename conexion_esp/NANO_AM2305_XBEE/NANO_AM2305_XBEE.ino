@@ -5,7 +5,7 @@ void setup()
   #include "Conf.h"
   wdt_enable(WDTO_8S);
   Serial.begin(9600);
-  esp.print("ACT,LV19;");
+  esp.print("ACT,LV16;");
 }
 
 void loop() 
